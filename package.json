@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "copy": "^0.3.2",
+    "math": "^0.0.3",
+    "random": "^5.1.1",
+    "sys": "^0.0.1",
+    "tkinter": "^0.0.2-security"
+  }
+}
