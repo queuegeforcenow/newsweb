@@ -1,0 +1,20 @@
+name: Deploy game site
+
+on:
+  push:
+    branches:
+      - main  # main ブランチに push されたら実行
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # 実行環境
+
+    steps:
+      - name: Checkout code  # リポジトリをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Deploy to GitHub Pages  # GitHub Pages にデプロイ
+        uses: actions/deploy-pages@v2
+        with:
+          folder: .  # デプロイするフォルダ
+          token: ${{ secrets.GITHUB_TOKEN }}  # GitHub トークン
