@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オセロゲーム - プレイヤーとCPUの交互対戦</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #2a2a2a; /* 背景色をダークグレーに設定 */
+        }
+        canvas {
+            border: 2px solid #000; /* ボードの境界線を黒に設定 */
+            background-color: #0f0; /* ボードの背景色を緑に設定 */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="board" width="400" height="400"></canvas>
+    <script>
+        // Canvas要素を取得し、描画コンテキストを取得
+        const canvas = document.getElementById('board');
+        const context = canvas.getContext('2d');
+        const size = 8; // ボードのサイズ（8x8）
+        const cellSize = canvas.width / size; // 各セルのサイズ
+        let board = Array(size).fill().map(() => Array(size).fill(null)); // ボードの初期化
+        let currentPlayer = 'white'; // 初期プレイヤーの設定（白）
+
+        // 初期配置: 中央に白と黒の駒を配置
+        board[3][3] = board[4][4] = 'white';
+        board[3][4] = board[4][3] = 'black';
+
+        // 各方向の移動ベクトル（上下左右と斜め4方向）
+        const directions = [
+            { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: -1, y: 0 },
+            { x: 1, y: 1 }, { x: 1, y: -1 }, { x: -1, y: 1 }, { x: -1, y: -1 }
+        ];
+
+        // ボードを描画する関数
+        function drawBoard() {
+            context.clearRect(0, 0, canvas.width, canvas.height); // ボードのクリア
+
+            // ボードのグリッドを描画
+            context.strokeStyle = '#000'; // グリッド線の色
+            context.lineWidth = 2; // グリッド線の幅
+            for (let i = 0; i <= size; i++) {
+                context.beginPath();
+                context.moveTo(i * cellSize, 0);
+                context.lineTo(i * cellSize, canvas.height);
+                context.stroke();
+                context.beginPath();
+                context.moveTo(0, i * cellSize);
+                context.lineTo(canvas.width, i * cellSize);
+                context.stroke();
+            }
+
+            // コマを描画
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    if (board[y][x] === 'black') {
+                        context.fillStyle = '#000'; // 黒のコマ
+                    } else if (board[y][x] === 'white') {
+                        context.fillStyle = '#fff'; // 白のコマ
+                    } else {
+                        continue; // コマがないセルはスキップ
+                    }
+                    context.beginPath();
+                    context.arc(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2 * 0.4, 0, Math.PI * 2);
+                    context.fill(); // コマを描画
+                }
+            }
+        }
+
+        // 指定された位置にプレイヤーの手が有効かどうかをチェックする関数
+        function isValidMove(x, y, color) {
+            if (board[y][x] !== null) return false; // 既にコマが置かれている位置は無効
+            const opponent = color === 'black' ? 'white' : 'black'; // 相手の色
+            let valid = false;
+
+            // 各方向に対してチェック
+            for (const { x: dx, y: dy } of directions) {
+                let nx = x + dx, ny = y + dy;
+                let hasOpponentBetween = false;
+
+                // 進んだ先に相手のコマがあれば、逆方向に進む
+                while (nx >= 0 && ny >= 0 && nx < size && ny < size && board[ny][nx] === opponent) {
+                    nx += dx;
+                    ny += dy;
+                    hasOpponentBetween = true;
+                }
+
+                // 最終的に自分のコマがある場合、手が有効
+                if (hasOpponentBetween && nx >= 0 && ny >= 0 && nx < size && ny < size && board[ny][nx] === color) {
+                    valid = true;
+                }
+            }
+
+            return valid;
+        }
+
+        // 指定された位置でコマをひっくり返す関数
+        function flipDisks(x, y, color) {
+            const opponent = color === 'black' ? 'white' : 'black'; // 相手の色
+
+            // 各方向に対してひっくり返す
+            for (const { x: dx, y: dy } of directions) {
+                let nx = x + dx, ny = y + dy;
+                let path = [];
+
+                while (nx >= 0 && ny >= 0 && nx < size && ny < size && board[ny][nx] === opponent) {
+                    path.push({ x: nx, y: ny }); // 相手のコマの位置を記録
+                    nx += dx;
+                    ny += dy;
+                }
+
+                // 自分のコマがあれば、記録された位置のコマをひっくり返す
+                if (path.length > 0 && nx >= 0 && ny >= 0 && nx < size && ny < size && board[ny][nx] === color) {
+                    for (const pos of path) {
+                        board[pos.y][pos.x] = color; // コマをひっくり返す
+                    }
+                }
+            }
+        }
+
+        // 指定された位置にコマを置く関数
+        function makeMove(x, y, color) {
+            if (isValidMove(x, y, color)) {
+                board[y][x] = color; // コマを置く
+                flipDisks(x, y, color); // コマをひっくり返す
+                drawBoard(); // ボードを再描画
+                currentPlayer = currentPlayer === 'white' ? 'black' : 'white'; // プレイヤーを交代
+
+                // CPUのターンであれば、少し待ってからCPUの手を実行
+                if (currentPlayer === 'black') {
+                    setTimeout(computerMove, 500); // 0.5秒後にCPUの手を実行
+                }
+            }
+        }
+
+        // CPUの手を選ぶ関数（ランダムに合法手を選択）
+        function computerMove() {
+            let possibleMoves = [];
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    if (isValidMove(x, y, 'black')) {
+                        possibleMoves.push({ x, y }); // 合法手をリストに追加
+                    }
+                }
+            }
+
+            // 合法手があれば、ランダムに選択して手を打つ
+            if (possibleMoves.length > 0) {
+                const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                makeMove(move.x, move.y, 'black'); // CPUの色を 'black' と仮定
+            }
+        }
+
+        // プレイヤーがクリックした位置に手を打つ処理
+        canvas.addEventListener('click', (event) => {
+            if (currentPlayer !== 'white') return; // プレイヤーのターンでなければ無視
+
+            // クリック位置をセル座標に変換
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((event.clientX - rect.left) / cellSize);
+            const y = Math.floor((event.clientY - rect.top) / cellSize);
+            makeMove(x, y, 'white'); // プレイヤーの色を 'white' と仮定
+        });
+
+        drawBoard(); // 初期ボードの描画
+    </script>
+</body>
+</html>
