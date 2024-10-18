@@ -1,0 +1,19 @@
+.main {
+    text-align: center;
+    justify-content: center;
+    font-family: "ヒラギノ丸ゴ ProN";
+}
+
+.button {
+    display:inline-block;
+    color:#FFF;
+}
+
+.body { 
+    background-color: #ccc;
+}
+
+#myCanvas {
+    background-color: #000;
+    margin-top:10px;
+}
