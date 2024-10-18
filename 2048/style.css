@@ -1,0 +1,23 @@
+#game-container {
+  width: 400px;
+  margin: 0 auto;
+}
+
+#grid {
+  border-collapse: collapse;
+}
+
+#grid td {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+/* 数字のタイルの色を設定 */
+.tile-2 { background-color: #eee4da; color: #776e65; }
+.tile-4 { background-color: #ede0c8; color: #776e65; }
+.tile-8 { background-color: #f2b179; color: #f9f6f2; }
+/* ... その他の数字のタイルの色 ... */
