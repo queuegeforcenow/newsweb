@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="blc.css" type="text/css" />
+    <title>テストシート</title>
+</head>
+<body>
+    <div class="main">
+         <span calss="title-text">ブロック崩し</span></br>
+         <!---------- キャンバスを作成（width：幅、height：高さ） ----------->
+        <canvas id="myCanvas" width="480" height="320"></canvas>
+        <script>
+            //---------------------- 定数部 --------------------------
+
+            // キャンバスを取得
+            var canvas = document.getElementById("myCanvas");
+            // キャンバスのコンテキスト（2D描画のために使用するツール）を取得
+            var ctx = canvas.getContext("2d");
+            
+            // ボールの中心の座標（キャンバスの中央になるように）
+            var x = canvas.width / 2;
+            var y = canvas.height - 30;
+            // 描画するごとにxとyに値を加えるために使用
+            var dx = 2;
+            var dy = -2;
+            // ボールの半径
+            var ballRdius = 10;
+
+            // パドルの定義
+            // 縦の大きさ
+            var paddleHeight = 10;
+            // 横の大きさ
+            var paddleWidth = 75;
+            // 位置
+            // （キャンバスの幅 - パドルの幅） / 2 の位置
+            var paddleX = (canvas.width - paddleWidth) / 2;
+
+            // 右キー
+            var rightPushed = false;
+            // 左キー
+            var leftPushed = false;
+
+            // ブロックの定義
+            // 行
+            var blockRowCount = 5;
+            // 列
+            var blockColumnCount = 5;
+            // ブロックの幅
+            var blockWidth = 76;
+            // ブロックの高さ
+            var blockHeight = 20;
+            // ブロック間のパディング
+            var blockPadding = 10;
+            // 基準位置
+            var blockOffsetTop = 30;
+            var blockOffsetLeft = 30;
+            // 配列
+            var blocks = [];
+            // 上記が二重配列であることを定義するために、二重ループを使い、
+            // 配列の中にさらに配列が入っているということをあらかじめ定義
+            for (var c = 0; c < blockColumnCount; c++) {
+                // 配列の中に配列が入っていることの宣言部分
+                blocks[c] = [];
+                for (var r = 0; r < blockRowCount; r++) {
+                    // 連想配列X、Y（xとyは配列名）
+                    // 衝突フラグを立てるためにステータスの定義を追加（status=1のときはブロックを描画）
+                    blocks[c][r] = {x: 0, y: 0, status: 1};
+                }
+            }
+
+            // スコア
+            var score = 0;
+            // ライフ
+            var life = 3;
+
+            // ★ 自分で追加 ★
+            // STARTボタン実装で使用
+            var startCount = 0;
+            // STOPボタン実装で使用
+            var stopFlg = true;
+
+            //---------------------- 関数部 --------------------------
+
+            // スコアを描画する関数
+            function drawScore() {
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "white";
+                ctx.fillText("Score：" + score, 8, 20);
+            }
+
+            // ライフを描画する関数
+            function drawlife() {
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "#FF1493";
+                // ★ 自分で修正(ライフの表示を❤︎表示に修正) ★
+                if (life == 3) {
+                    ctx.fillText("❤︎❤︎❤︎", canvas.width - 85, 20);
+                } else if (life == 2) {
+                    ctx.fillText("❤︎❤︎", canvas.width - 85, 20);
+                } else if (life == 1) {
+                    ctx.fillText("❤︎", canvas.width - 85, 20);
+
+                }
+            }
+
+            // 衝突検出関数（collision：衝突、 Detection：検出）
+            function collisionDetection() {
+                // それぞれのブロックに対して処理をおこなう
+                for (var c = 0; c < blockColumnCount; c++) {
+                    for (var r = 0; r < blockRowCount; r++) {
+                        var b = blocks[c][r];
+                        // status=1のとき（衝突してブロックが消えてないとき）
+                        if (b.status == 1) {
+                            // ボールの位置が、ブロックのX座標から横幅を考慮した範囲内、
+                            // ブロックのY座標から縦幅を考慮した範囲内にあるとき、衝突している
+                            if (x > b.x && x < b.x + blockWidth && y > b.y && y < b.y + blockHeight) {
+                                // yの変化をマイナスにする（符号を反転させた値を設定し、y方向の動きの向きを変える）
+                                dy = -dy;
+                                // 衝突したらstatus=0を設定
+                                b.status = 0;
+                                // スコアを１加算
+                                score++;
+                                // スコアがブロックの行×列の数と等しくなった場合、アラート表示
+                                if (score == blockRowCount * blockColumnCount) {
+                                    alert("クリア！！！！！すてき！！！！！");
+                                    document.location.reload();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ボール描画の関数
+            function drawBall() {
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, Math.PI * 2, false);
+                ctx.fillStyle = "white";
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            // パドル描画の関数
+            function drawPaddle() {
+                ctx.beginPath();
+                ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+                ctx.fillStyle = "#FF1493";
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            // ブロック描画の関数
+            function drawBlocks() {
+                // 列に対するfor文
+                for (var c = 0; c < blockColumnCount; c++) {
+                    // 行に対するfor文
+                    for (var r = 0; r < blockRowCount; r++) {
+                        // status=1のときはブロックを描画
+                        if (blocks[c][r].status == 1) {
+                            // X座標 = 列 × (ブロックの幅 + ブロック間のパディング) + 基準位置
+                            var blockX = (c * (blockWidth + blockPadding)) + blockOffsetLeft;
+                            // Y座標 = 列 × (ブロックの高さ + ブロック間のパディング) + 基準位置
+                            var blockY = (r * (blockHeight + blockPadding)) + blockOffsetTop;
+                            // 配列名[配列のインデックス][配列の要素のインデックス]
+                            // 後で宣言する「blocksArray」のXとYの値を決めている
+                            // xとyは配列名
+                            blocks[c][r].x = blockX;
+                            blocks[c][r].y = blockY;
+                            // ブロックの描画
+                            ctx.beginPath();
+                            ctx.rect(blockX, blockY, blockWidth, blockHeight);
+                            // ★ 自分で修正（ブロックの色を行ごとに変えるよう修正） ★
+                            // 1行目
+                            if (r == 0) {
+                                ctx.fillStyle = "#0000FF";
+                            // 2行目
+                            } else if (r == 1) {
+                                ctx.fillStyle = "#0066FF";
+                            // 3行目
+                            } else if (r == 2) {
+                                ctx.fillStyle = "#5D99FF";
+                            // 4行目
+                            } else if (r == 3) {
+                                ctx.fillStyle = "#A4C6FF";
+                            // 5行目
+                            } else if (r == 4) {
+                                ctx.fillStyle = "white";
+                            }
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+                }
+            }
+
+            // 描画の関数
+            function draw() {
+                // 移動の軌跡が残らないようにするために追加
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawBall();
+                drawBlocks();
+                drawPaddle();
+                drawScore();
+                drawlife();
+                collisionDetection();
+                // yがボールの半径より小さくなった場合（上限）
+                if (y + dy < ballRdius) {
+                    // yの変化をマイナスにする（符号を反転させた値を設定し、y方向の動きの向きを変える）
+                    dy = -dy;
+                // yが、キャンバスの高さ - ボールの半径を超えた場合（下限）
+                } else if (y + dy > canvas.height - ballRdius) {
+                    // パドル衝突時用（下限）
+                    // ボールの位置がパドルのX座標の範囲内の場合
+                    if (x > paddleX && x < paddleX + paddleWidth) {
+                        // yがパドルの高さより小さくなる場合
+                        if (y = y - paddleHeight) {
+                            // 前述と同様
+                            dy = -dy;
+                        }
+                    } else {
+                        // 衝突場所がパドルでない場合
+                        // ライフを1減らす
+                        life --;
+                        // ライフがない場合
+                        if (!life) {
+                            // ゲームオーバーを表示
+                            alert("GAME OVER");
+                            document.location.reload();
+                            // ★ 自分で修正（clearInterval(interval)をメソッド化） ★
+                            onClearInterval();
+                        } else {
+                            // ライフがある場合、中央から開始（＝はじめから開始）
+                            // ボールの座標、パドルの位置を初期化
+                            x = canvas.width / 2;
+                            y = canvas.height - 30;
+                            dx = 2;
+                            dy = -2;
+                            paddleX = (canvas.width - paddleWidth) / 2;
+                        }
+                    }
+                }
+
+                // 上記yでやったことのx版
+                // xがキャンバスの幅 - ボールの半径を超えた場合、または、xがボールの半径より小さくなった場合
+                if (x + dx > canvas.width - ballRdius | x + dx < ballRdius) {
+                    // xの変化をマイナスにする（符号を反転させた値を設定し、x方向の動きの向きを変える）
+                    dx = -dx;
+                }
+
+                // 右キーが押されていた場合、かつ、パドルの位置がキャンバスの幅 - パドルの幅より小さい場合右移動可
+                if (rightPushed && paddleX < canvas.width - paddleWidth) {
+                    paddleX　+= 7;
+                // 左キーが押されていた場合、かつ、パドルの位置が0以上の場合左移動可
+                } else if (leftPushed && paddleX > 0) {
+                    paddleX　-= 7;
+                }
+
+                // 描画するごとにxとyに値を加えることで、ボールが動いてるように見える
+                x += dx;
+                y += dy;
+            }
+
+            //---------------------- 実行部 --------------------------
+
+            // 左右キー押下時、マウス操作時実行処理
+            document.addEventListener("keydown", isKeyDown, false);
+            document.addEventListener("keyup", isKeyUp, false);
+            document.addEventListener("mousemove", mouseMoveHandler, false);
+            // 左右キー押下判定の関数
+            function isKeyDown(e) {
+                if (e.key == "Right" || e.key == "ArrowRight") {
+                    rightPushed = true;
+                } else if (e.key == "Left" || e.key == "ArrowLeft") {
+                    leftPushed = true;
+                }
+            }
+            // 左右キー押下解除判定の関数
+            function isKeyUp(e) {
+                if (e.key == "Right" || e.key == "ArrowRight") {
+                    rightPushed = false;
+                } else if (e.key == "Left" || e.key == "ArrowLeft") {
+                    leftPushed = false;
+                }
+            }
+            // パドルをマウスで操作する関数
+            function mouseMoveHandler(e) {
+                // キャンバスの左端からのマウスカーソルの距離を出す
+                // マウスのX座標（e.clientX） - キャンバスの左端の距離（canvas.offsetLeft）
+                var mouseX = e.clientX - canvas.offsetLeft;
+                // ★ 自分で修正（パドルの可動域が広すぎたため） ★
+                // マウスのX座標が、０+パドルの幅の半分より大きい、かつ、キャンバスの幅-パドルの幅の半分より小さい場合
+                if (mouseX > 0 + paddleWidth / 2 && mouseX < canvas.width - paddleWidth / 2) {
+                    // パドルの位置を設定
+                    // パドルの位置 = マウスのX座標 - パドルの幅 / 2
+                    paddleX = mouseX - paddleWidth / 2; 
+                }
+            }
+
+            // ★ 自分で追加 ★
+            // STARTボタン＆STOPボタン実行処理
+            // STARTボタンが押される前に表示しておくため
+            drawBlocks();
+            drawPaddle();
+            drawScore();
+            drawlife();
+            // Uncaught TypeError: Cannot set properties of null (setting 'onclick')
+            // が出るため、下記 window.onload = function () { を追加
+            window.onload = function () {
+                // STARTボタン押下時の処理を行う関数の呼び出し
+                document.getElementById("start-button").onclick = function () {
+                    onStartButton();
+                }
+                // STOPボタン押下時の処理を行う関数の呼び出し
+                document.getElementById("stop-button").onclick = function () {
+                    onStopButton(); 
+                }
+            }
+            // STARTボタン押下時の処理を行う関数
+            function onStartButton() {
+                // STARTボタン押下1回目の場合
+                if (startCount == 0) {
+                    onSetInterval();
+                    startCount ++;
+                    document.getElementById('action1').innerHTML = ' END ';
+                } else {
+                    // STARTボタン押下2回目以降の場合
+                    document.getElementById('action1').innerHTML = 'START';
+                    // ゲームオーバー時と同じ動作
+                    document.location.reload();
+                }
+            }
+            // STOPボタン押下時の処理を行う関数
+            function onStopButton() {
+                if (stopFlg) {
+                    onClearInterval();
+                    document.getElementById('action2').innerHTML = 'RESTART';
+                    stopFlg = false;
+                } else {
+                    onClearInterval();
+                    onSetInterval();
+                    document.getElementById('action2').innerHTML = ' STOP ';
+                    stopFlg = true;
+                }
+            }
+            // setIntervalを動かす関数
+            function onSetInterval() {
+                // setIntervalによって、15ミリ秒おきに、あるいは、止めるまでdraw（）が呼ばれる
+                interval = setInterval(draw, 15);
+            }
+            // clearIntervalを動かす関数
+            function onClearInterval() {
+                clearInterval(interval);
+            }
+        </script>
+        </br>
+        <div class="button" id="start-button">
+            <table>
+                <tr>
+                    <td><button type="button" id="action1">START</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="button" id="stop-button">
+            <table>
+                <tr>
+                    <td><button type="button" id="action2"> STOP </button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
