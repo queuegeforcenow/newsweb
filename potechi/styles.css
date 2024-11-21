@@ -72,3 +72,21 @@ body {
 .costume-karakuchi {
   background-color: #ffab91;
 }
+
+#experience-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #ddd;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  margin-top: 20px;
+  position: relative;
+}
+
+#experience-progress {
+  height: 100%;
+  background-color: #76c7c0;
+  width: 0%;
+  transition: width 0.2s;
+  border-radius: 5px;
+}
