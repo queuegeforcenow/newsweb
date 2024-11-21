@@ -1,0 +1,73 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+#title-screen, #game-screen, #result-screen {
+  padding: 20px;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#exp-bar {
+  background: #ccc;
+  width: 70%;
+  height: 20px;
+  border-radius: 10px;
+  position: relative;
+}
+
+#exp-progress {
+  background: #ff9800;
+  height: 100%;
+  width: 0;
+  border-radius: 10px;
+}
+
+#chips-area {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.chip {
+  background: url('https://example.com/potato-chip.png') no-repeat center center;
+  background-size: contain;
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ff9800;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#current-japanese {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.romaji {
+  font-size: 20px;
+  color: #555;
+}
