@@ -80,27 +80,32 @@ document.addEventListener("DOMContentLoaded", () => {
   let timer = 60;
   let gameInterval;
   let timerInterval;
-  let typingTimeout;
 
+  // **イベントリスナーの設定**
   document.addEventListener("keydown", (e) => {
     if (e.key === " " && titleScreen.style.display !== "none") {
+      e.preventDefault(); // スクロール防止
       startGame();
     } else if (e.key === " " && resultScreen.style.display !== "none") {
+      e.preventDefault(); // スクロール防止
       retryGame();
-    } else if (gameScreen.style.display !== "none" && typingTimeout) {
+    } else if (gameScreen.style.display !== "none") {
       handleTyping(e.key);
     }
   });
 
+  // **ゲーム開始**
   function startGame() {
     titleScreen.classList.add("hidden");
     gameScreen.classList.remove("hidden");
 
+    resetGame();
     displayPhrase(currentPhrase);
     startTimer();
     gameInterval = setInterval(updateGame, 100);
   }
 
+  // **ゲームリトライ**
   function retryGame() {
     resultScreen.classList.add("hidden");
     gameScreen.classList.remove("hidden");
@@ -109,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startGame();
   }
 
+  // **ゲームのリセット**
   function resetGame() {
     exp = 0;
     level = 1;
@@ -120,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(timerInterval);
   }
 
+  // **タイマーのスタート**
   function startTimer() {
     timerInterval = setInterval(() => {
       if (timer <= 0) {
@@ -131,6 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
+  // **ゲームの更新**
   function updateGame() {
     if (exp >= 100) {
       levelUp();
@@ -138,20 +146,17 @@ document.addEventListener("DOMContentLoaded", () => {
     displayChips();
   }
 
+  // **レベルアップ**
   function levelUp() {
     level++;
     exp = 0;
     updateExpBar();
     if (isBonusMode) {
-      levelUpBonusMode();
+      chipCount += 5; // ボーナスで多くのチップスを召喚
     }
   }
 
-  function levelUpBonusMode() {
-    // Bonus mode increases the chip count and experience reward rate
-    isBonusMode = true;
-  }
-
+  // **ポテトチップスを表示**
   function displayChips() {
     chipsArea.innerHTML = '';
     for (let i = 0; i < chipCount; i++) {
@@ -161,21 +166,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // **現在のフレーズを表示**
   function displayPhrase(phrase) {
     currentJapaneseDisplay.textContent = phrase.japanese;
     currentRomajiDisplay.textContent = phrase.romaji;
   }
 
+  // **ランダムなフレーズを取得**
   function getRandomPhrase() {
     const randomIndex = Math.floor(Math.random() * phrases.length);
     return phrases[randomIndex];
   }
 
+  // **タイピング処理**
   function handleTyping(typedChar) {
     if (typedChar.toLowerCase() === currentPhrase.romaji.charAt(0)) {
       currentPhrase.romaji = currentPhrase.romaji.slice(1);
       increaseExp(5);
       if (currentPhrase.romaji.length === 0) {
+        chipCount += level; // 現在のレベルに応じて召喚数アップ
         currentPhrase = getRandomPhrase();
         displayPhrase(currentPhrase);
       }
@@ -184,23 +193,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // **経験値を増加**
   function increaseExp(amount) {
     exp += amount;
     if (isBonusMode) {
-      exp += 5; // bonus
+      exp += 5; // ボーナス時は追加で増加
     }
     updateExpBar();
   }
 
+  // **経験値をリセット**
   function resetExp() {
     exp = 0;
     updateExpBar();
   }
 
+  // **経験値バーを更新**
   function updateExpBar() {
     expProgress.style.width = `${(exp / 100) * 100}%`;
   }
 
+  // **ゲーム終了**
   function endGame() {
     clearInterval(gameInterval);
     clearInterval(timerInterval);
