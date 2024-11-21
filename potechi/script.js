@@ -98,6 +98,17 @@ document.addEventListener("DOMContentLoaded", () => {
     nn: "ん",
     xu: "ぅ",
     ltu: "っ",
+    si: "し",
+    shi: "し",
+    ti: "ち",
+    chi: "ち",
+    zyu: "じゅ",
+    fu: "ふ",
+    hu: "ふ",
+    tu: "つ",
+    tsu: "つ",
+    ji: "じ",
+    zi: "じ",
     // その他必要に応じて追加
   };
 
