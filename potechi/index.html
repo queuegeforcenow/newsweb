@@ -8,18 +8,25 @@
 </head>
 <body>
     <div class="game-container">
-        <h1>タイピングゲーム</h1>
-        <div id="word-container"></div>
-        <input type="text" id="input-box" placeholder="ここに入力" autofocus>
-        <div class="score">スコア: <span id="score">0</span></div>
-        <div class="level">レベル: <span id="level">1</span></div>
-        <div class="experience-bar-container">
-            <div class="experience-bar" id="experience-bar"></div>
+        <h1>ポテトチップス召喚ゲーム</h1>
+        <div id="scoreboard">
+            <p>スコア: <span id="score">0</span></p>
+            <p>今回の合計召喚数: <span id="current-total-summon">0</span></p>
+            <p>累計召喚数: <span id="total-summon">0</span></p>
         </div>
+        <div id="word-container">スペースキーを押して開始</div>
+        <input type="text" id="input-box" autocomplete="off" disabled>
         <div id="potato-container"></div>
+        <div id="progress-container">
+            <p>レベル: <span id="level">1</span></p>
+            <div id="experience-bar-container">
+                <div id="experience-bar"></div>
+            </div>
+        </div>
+        <div id="timer-container">
+            残り時間: <span id="time">60</span>秒
+        </div>
         <button id="reset-button">リセット</button>
-        <div class="high-score">ハイスコア: <span id="high-score">0</span></div>
-        <div id="timer" class="timer">残り時間: <span id="time">30</span>秒</div>
     </div>
     <script src="script.js"></script>
 </body>
