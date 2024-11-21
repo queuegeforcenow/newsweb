@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { japanese: "犬", romaji: "inu" },
     { japanese: "猫", romaji: "neko" },
     { japanese: "車", romaji: "kuruma" },
-    { japanese: "ゲームが好きです。", romaji: "ge-mugasukidesu." },
+    { japanese: "ゲームが好きです。", romaji: "ge-mugasukidesu" },
     { japanese: "ポテトチップス", romaji: "potetochippusu" },
     { japanese: "テレビ", romaji: "terebi" },
     { japanese: "パソコン", romaji: "pasokon" },
@@ -153,37 +153,43 @@ document.addEventListener("DOMContentLoaded", () => {
     let inputChar = e.key.toLowerCase();
 
     // 特殊ローマ字の処理
-    if (romajiMap[inputChar + currentWord.charAt(1)]) {
-      inputChar = romajiMap[inputChar + currentWord.charAt(1)];
-      currentWord = currentWord.slice(2); // 2文字進める
+    if (currentWord.startsWith('nn') && inputChar === 'n') {
+      currentWord = currentWord.slice(2); // nn を削除
+      inputChar = "ん"; // んに変換
+    } else if (currentWord.startsWith('xu') && inputChar === 'x') {
+      currentWord = currentWord.slice(2); // xu を削除
+      inputChar = "ぅ"; // ぅに変換
+    } else if (currentWord.startsWith('ltu') && inputChar === 'l') {
+      currentWord = currentWord.slice(3); // ltu を削除
+      inputChar = "っ"; // っに変換
     }
 
     // 一致した場合
-    if (inputChar === currentWord.charAt(0).toLowerCase()) {
-      currentWord = currentWord.slice(1); // 入力が成功した部分を削除
-      score += currentLevel; // スコアを加算
-      summonCount += currentLevel; // 召喚数を加算
-      progress += 0.2; // ゲージの進行を小さく変更
-      if (progress >= 1) {
-        progress = 0; // ゲージ満タンでリセット
-        currentLevel++;
+    if (inputChar === currentWord.charAt(0)) {
+      progress += 0.05;
+      score++;
+      currentWord = currentWord.slice(1);
+      if (currentWord.length === 0) {
+        summonCount++;
+        if (summonCount % 10 === 0) {
+          currentLevel++;
+        }
+        generateWord();
       }
-      generateWord();
-    } else if (currentWord.length > 0) {
-      progress = 0; // ミスでゲージをリセット
-      generateWord();
+    } else {
+      progress = 0; // ミスでゲージリセット
     }
     updateDisplay();
   }
 
-  // ゲーム終了
+  // ゲーム終了処理
   function endGame() {
     clearInterval(timerInterval);
     alert(`ゲーム終了！\nスコア: ${score}\n召喚数: ${summonCount}`);
     resetGame();
   }
 
-  // イベントリスナー
+  // スタートボタン押下
   startButton.addEventListener("click", startGame);
   document.addEventListener("keydown", handleInput);
 });
