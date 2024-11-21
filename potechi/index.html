@@ -1,34 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ポテトチップス召喚ゲーム</title>
+  <title>ポテトチップスタイピングゲーム</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="title-screen">
-    <h1>chipタイピング</h1>
-    <p>スペースキーでスタート</p>
-    <button id="settings-button">設定変更</button>
+    <h1>ポテトチップスタイピングゲーム</h1>
+    <button id="start-button">ゲーム開始</button>
+    <div id="costume-display"></div>
   </div>
 
-  <div id="game-screen" class="hidden">
-    <div class="status-bar">
-      <div id="exp-bar">
-        <div id="exp-progress"></div>
-      </div>
-      <p id="timer">60秒</p>
+  <div id="game-area" style="display: none;">
+    <div id="header">
+      <span id="score-display"></span>
+      <span id="level-display"></span>
+      <span id="timer-display"></span>
     </div>
-    <div id="chips-area"></div>
-    <p id="current-japanese"></p>
-    <p id="current-romaji" class="romaji"></p>
-  </div>
-
-  <div id="result-screen" class="hidden">
-    <h2>結果</h2>
-    <p id="score-display"></p>
-    <button id="retry-button">リトライ</button>
+    <div id="progress-area">
+      <div id="japanese-display"></div>
+      <div id="current-word"></div>
+      <div id="progress-display"></div>
+    </div>
+    <input id="input-field" type="text" autocomplete="off" placeholder="ここにタイピング">
   </div>
 
   <script src="script.js"></script>
