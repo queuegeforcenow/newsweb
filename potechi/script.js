@@ -1,13 +1,28 @@
-const words = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape"];
+// 語録の設定（200個以上）
+const words = [
+    "sakura", "fuji", "tokyo", "nihon", "konnichiwa", "sayonara", "arigatou", "osushi", "ramen", "matcha",
+    "takoyaki", "kawaii", "samurai", "geisha", "origami", "ikura", "wasabi", "mochi", "shinkansen",
+    "yuki", "hana", "matsuri", "teriyaki", "senbei", "sumo", "bento", "soba", "udon", "tsukimi",
+    "kaminari", "kirakira", "hanabi", "kumo", "kaze", "yama", "mizu", "ame", "natsu", "fuyu",
+    "aki", "haru", "onigiri", "nori", "tanuki", "kitsune", "neko", "inu", "torii", "hikari",
+    "hime", "tengu", "shamisen", "kimono", "sakura", "wafuku", "kabuki", "noh", "taiko", "karaoke",
+    "kanji", "hiragana", "katakana", "kakigori", "tempura", "yakitori", "gyoza", "karaage", "natto",
+    "katsu", "miso", "tofu", "sake", "daifuku", "anko", "manju", "taiyaki", "dorayaki", "zen",
+    "shinto", "buddha", "jizo", "kannon", "ryu", "oni", "yokai", "fushigi", "kaidan", "yurei",
+    "tanabata", "bonodori", "shochu", "umami", "mirin", "dashi", "wasanbon", "edamame", "kamaboko",
+    "konjac", "yatsuhashi", "wagashi", "sencha", "genmaicha", "gyokuro", "houjicha"
+];
+
+// グローバル変数
 let currentWord = "";
 let score = 0;
 let level = 1;
 let experience = 0;
 let experienceToLevelUp = 100;
-let isBonusMode = false;
-let timer = 30;
-let timerInterval;
-let highScore = 0;
+let timer = 60;
+let isGameStarted = false;
+let totalSummon = parseInt(localStorage.getItem("totalSummon") || 0);
+let currentTotalSummon = 0;
 
 // DOM Elements
 const wordContainer = document.getElementById("word-container");
@@ -16,32 +31,28 @@ const scoreDisplay = document.getElementById("score");
 const levelDisplay = document.getElementById("level");
 const experienceBar = document.getElementById("experience-bar");
 const potatoContainer = document.getElementById("potato-container");
-const resetButton = document.getElementById("reset-button");
-const timerDisplay = document.getElementById("timer");
+const totalSummonDisplay = document.getElementById("total-summon");
+const currentTotalSummonDisplay = document.getElementById("current-total-summon");
 const timeDisplay = document.getElementById("time");
+const resetButton = document.getElementById("reset-button");
 
-// Load high score from cookies
-const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    return parts.length === 2 ? parts.pop().split(";").shift() : 0;
-};
+// 初期表示
+scoreDisplay.textContent = score;
+totalSummonDisplay.textContent = totalSummon;
+currentTotalSummonDisplay.textContent = currentTotalSummon;
 
-highScore = parseInt(getCookie("highScore")) || 0;
-document.getElementById("high-score").textContent = highScore;
-
-// Generate a random word
+// ランダムな単語を生成
 const generateWord = () => {
     currentWord = words[Math.floor(Math.random() * words.length)];
     wordContainer.textContent = currentWord;
 };
 
-// Update experience bar
+// 経験値バーを更新
 const updateExperienceBar = () => {
     experienceBar.style.width = `${(experience / experienceToLevelUp) * 100}%`;
 };
 
-// Level up
+// レベルアップ
 const levelUp = () => {
     if (experience >= experienceToLevelUp) {
         level++;
@@ -51,32 +62,33 @@ const levelUp = () => {
     }
 };
 
-// Create potato chips with animation
+// ポテトチップスを召喚
 const summonPotatoChips = (count) => {
     for (let i = 0; i < count; i++) {
         const potatoChip = document.createElement("div");
         potatoChip.classList.add("potato-chip");
         potatoChip.textContent = "🥔";
 
-        // ランダムな位置にポテトチップスを配置
-        const randomX = Math.random() * 80 + 10; // 画面幅の10%〜90%の間
-        const randomY = Math.random() * 50 + 10; // 画面高さの10%〜60%の間
+        const randomX = Math.random() * 80 + 10;
+        const randomY = Math.random() * 50 + 10;
         potatoChip.style.left = `${randomX}%`;
         potatoChip.style.top = `${randomY}%`;
 
-        // ポテトチップスをゲームコンテナ内に追加
         potatoContainer.appendChild(potatoChip);
 
-        // アニメーション終了後に削除
         potatoChip.addEventListener("animationend", () => {
             potatoChip.remove();
         });
     }
+    currentTotalSummon += count;
+    totalSummon += count;
+    currentTotalSummonDisplay.textContent = currentTotalSummon;
+    totalSummonDisplay.textContent = totalSummon;
 };
 
-// Start timer
+// タイマー開始
 const startTimer = () => {
-    timerInterval = setInterval(() => {
+    const timerInterval = setInterval(() => {
         timer--;
         timeDisplay.textContent = timer;
         if (timer <= 0) {
@@ -86,62 +98,40 @@ const startTimer = () => {
     }, 1000);
 };
 
-// End game
+// ゲーム終了
 const endGame = () => {
     inputBox.disabled = true;
     wordContainer.textContent = "終了!";
-    if (score > highScore) {
-        highScore = score;
-        document.cookie = `highScore=${highScore}; path=/; max-age=31536000`; // 1年保持
-    }
-    alert(`ゲーム終了! あなたのスコア: ${score}`);
+    localStorage.setItem("totalSummon", totalSummon);
+    alert(`ゲーム終了! スコア: ${score}`);
 };
 
-// Check input
+// 入力チェック
 inputBox.addEventListener("input", () => {
-    if (inputBox.value === currentWord) {
+    const inputValue = inputBox.value.toLowerCase();
+    if (inputValue === currentWord) {
         score++;
-        experience += 10 * (isBonusMode ? 2 : 1); // ボーナスモードで経験値倍増
+        experience += 1 * level;
         scoreDisplay.textContent = score;
         updateExperienceBar();
-
-        if (experience >= experienceToLevelUp) {
-            levelUp();
-        }
-
-        summonPotatoChips(level); // レベルに応じてポテトチップスを召喚
-
-        // Check for bonus mode
-        if (!isBonusMode && experience >= 50) {
-            isBonusMode = true;
-        }
-
+        if (experience >= experienceToLevelUp) levelUp();
+        summonPotatoChips(level);
         inputBox.value = "";
         generateWord();
-    } else {
-        isBonusMode = false;
     }
 });
 
-// Reset game
-resetButton.addEventListener("click", () => {
-    score = 0;
-    level = 1;
-    experience = 0;
-    experienceToLevelUp = 100;
-    isBonusMode = false;
-    timer = 30;
-    scoreDisplay.textContent = score;
-    levelDisplay.textContent = level;
-    inputBox.value = "";
-    inputBox.disabled = false;
-    potatoContainer.innerHTML = "";
-    generateWord();
-    updateExperienceBar();
-    startTimer();
+// スペースキーでスタート
+document.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && !isGameStarted) {
+        isGameStarted = true;
+        wordContainer.textContent = "開始!";
+        inputBox.disabled = false;
+        inputBox.focus();
+        generateWord();
+        startTimer();
+    }
 });
 
-// Initialize game
-generateWord();
+// 初期化
 updateExperienceBar();
-startTimer();
