@@ -1,73 +1,74 @@
+/* styles.css */
+
+/* 基本スタイル */
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  background: #f7f7f7;
   margin: 0;
   padding: 0;
 }
 
-.hidden {
-  display: none;
+#title-screen {
+  background-color: #f8f8f8;
+  padding: 50px;
 }
 
-#title-screen, #game-screen, #result-screen {
+#game-area {
   padding: 20px;
 }
 
-.status-bar {
+/* 称号・コスチューム表示 */
+#costume-display {
+  margin-top: 10px;
+}
+
+/* スコアエリア */
+#header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  background: #eee;
+  padding: 10px;
 }
 
-#exp-bar {
-  background: #ccc;
-  width: 70%;
-  height: 20px;
-  border-radius: 10px;
-  position: relative;
+/* 日本語とローマ字の表示 */
+#progress-area {
+  margin-top: 20px;
+  font-size: 1.5em;
 }
 
-#exp-progress {
-  background: #ff9800;
-  height: 100%;
-  width: 0;
-  border-radius: 10px;
+/* タイピング入力エリア */
+#input-field {
+  margin-top: 20px;
+  padding: 10px;
+  width: 300px;
+  font-size: 1em;
 }
 
-#chips-area {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 20px 0;
+/* コスチューム別スタイル */
+.costume-norishio {
+  background-color: #fff8e1;
 }
 
-.chip {
-  background: url('https://example.com/potato-chip.png') no-repeat center center;
-  background-size: contain;
-  width: 30px;
-  height: 30px;
-  margin: 5px;
+.costume-konsome {
+  background-color: #ffe0b2;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #ff9800;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.costume-bata-shoyu {
+  background-color: #d1c4e9;
 }
 
-#current-japanese {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 20px 0;
+.costume-wasabi {
+  background-color: #c8e6c9;
 }
 
-.romaji {
-  font-size: 20px;
-  color: #555;
+.costume-cheese {
+  background-color: #ffe082;
+}
+
+.costume-garlic {
+  background-color: #ffccbc;
+}
+
+.costume-karakuchi {
+  background-color: #ffab91;
 }
