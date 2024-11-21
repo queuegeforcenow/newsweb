@@ -93,6 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let timerInterval = null;
   let progress = 0;
 
+  // 特殊ローマ字変換
+  const romajiMap = {
+    nn: "ん",
+    xu: "ぅ",
+    ltu: "っ",
+    // その他必要に応じて追加
+  };
+
+  // ゲーム開始
   function startGame() {
     resetGame();
     gameArea.style.display = "block";
@@ -100,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startTimer();
   }
 
+  // ゲームリセット
   function resetGame() {
     score = 0;
     summonCount = 0;
@@ -109,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateDisplay();
   }
 
+  // 単語生成
   function generateWord() {
     const wordData = words[Math.floor(Math.random() * words.length)];
     currentWord = wordData.romaji;
@@ -116,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateDisplay();
   }
 
+  // タイマー開始
   function startTimer() {
     timerInterval = setInterval(() => {
       timer--;
@@ -126,6 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
+  // 画面表示更新
   function updateDisplay() {
     currentWordDisplay.textContent = currentWord;
     japaneseDisplay.textContent = currentJapanese;
@@ -135,34 +148,42 @@ document.addEventListener("DOMContentLoaded", () => {
     experienceProgress.style.width = `${(progress / 1) * 100}%`; // ゲージの進捗を表示
   }
 
+  // ローマ字入力処理
   function handleInput(e) {
-    if (e.key.toLowerCase() === currentWord.charAt(0).toLowerCase()) {
+    let inputChar = e.key.toLowerCase();
+
+    // 特殊ローマ字の処理
+    if (romajiMap[inputChar + currentWord.charAt(1)]) {
+      inputChar = romajiMap[inputChar + currentWord.charAt(1)];
+      currentWord = currentWord.slice(2); // 2文字進める
+    }
+
+    // 一致した場合
+    if (inputChar === currentWord.charAt(0).toLowerCase()) {
       currentWord = currentWord.slice(1); // 入力が成功した部分を削除
       score += currentLevel; // スコアを加算
       summonCount += currentLevel; // 召喚数を加算
       progress += 0.2; // ゲージの進行を小さく変更
       if (progress >= 1) {
-        progress = 0; // ゲージ満了時にリセット
-        currentLevel++; // レベルアップ
+        progress = 0; // ゲージ満タンでリセット
+        currentLevel++;
       }
-      if (currentWord.length === 0) {
-        generateWord(); // 単語が終了したら次の単語へ
-      }
-    } else {
-      progress = 0; // 間違えた場合はゲージをリセット
+      generateWord();
+    } else if (currentWord.length > 0) {
+      progress = 0; // ミスでゲージをリセット
+      generateWord();
     }
     updateDisplay();
   }
 
+  // ゲーム終了
   function endGame() {
     clearInterval(timerInterval);
-    alert(`ゲーム終了! 合計スコア: ${score}, 合計召喚数: ${summonCount}`);
+    alert(`ゲーム終了！\nスコア: ${score}\n召喚数: ${summonCount}`);
     resetGame();
   }
 
-  // ゲーム開始
+  // イベントリスナー
   startButton.addEventListener("click", startGame);
-
-  // キーボード入力を全画面で受け付ける
   document.addEventListener("keydown", handleInput);
 });
