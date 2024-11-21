@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tu: "つ",
     tsu: "つ",
     ji: "じ",
+    chu: "ちゅ",
     zi: "じ",
     // その他必要に応じて追加
   };
