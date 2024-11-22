@@ -69,17 +69,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function summonPotato() {
   const potato = document.createElement("div");
-  const size = potatoSizeSelect.value;
+  const size = potatoSizeSelect.value; // ポテトチップスのサイズ設定
   potato.classList.add("potato", size);
 
-  // ポテトチップスを中央に配置
-  potato.style.left = `50%`;
-  potato.style.transform = "translateX(-50%)"; // 横方向で中央に配置
-  potato.style.animation = "potatoFly 1s forwards"; // アニメーションを適用
+  // ポテトチップスを画面中央に配置
+  potato.style.left = `50%`; // 横中央
+  potato.style.transform = "translateX(-50%)"; // 水平位置を中央に
 
+  // アニメーションの適用 (CSS で設定した "potatoFly" アニメーション)
+  potato.style.animation = "potatoFly 1s forwards";
+
+  // ポテトチップスを表示
   potatoContainer.appendChild(potato);
-  setTimeout(() => potato.remove(), 1000); // 1秒後に削除
-  summonCount++;
+
+  // 1秒後にポテトチップスを削除
+  setTimeout(() => potato.remove(), 1000); 
+
+  summonCount++; // 召喚数をカウント
+}
+
+  function handleInput(e) {
+  const input = e.key.toLowerCase();
+  const targetChar = currentWord[0];
+
+  if (isCorrectInput(input, targetChar)) {
+    currentWord = currentWord.slice(1);
+    score++;
+    progress += 0.1;
+    successSound.play();
+
+    // 正解入力後、ポテトチップスを召喚
+    summonPotato();
+
+    if (progress >= 1) {
+      progress = 0;
+      currentLevel++;
+    }
+
+    if (currentWord.length === 0) {
+      generateWord();
+    }
+  } else {
+    progress = 0;
+  }
+  updateDisplay();
 }
 
 
