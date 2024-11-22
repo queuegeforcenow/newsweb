@@ -82,6 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
     { japanese: "鳥", romaji: "tori" },
     { japanese: "犬", romaji: "inu" },
     { japanese: "猫", romaji: "neko" },
+    { japanese: "魑魅魍魎", romaji: "timimouryou" },
+    { japanese: "パブロ・ディエーゴ・ホセ・フランシスコ・デ・パウラ・ホアン・ネポムセーノ・マリーア・デ・ロス・レメディオス・クリスピーン・クリスピアーノ・デ・ラ・サンティシマ・トリニダード・ルイス・イ・ピカソ", romaji: "paburodhie-gohosefuransisukodepaurahoannnepomuse-nomari-aderosuremedhiosukurisupi-nnkurisupia-noderasanthisimatorinida-toruisuipikaso" },
   ];
 
   let score = 0;
