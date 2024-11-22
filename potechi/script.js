@@ -67,6 +67,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return alternatives ? alternatives.includes(input) : false;
   }
 
+  function summonPotato() {
+  const potato = document.createElement("div");
+  const size = potatoSizeSelect.value;
+  potato.classList.add("potato", size);
+
+  // ポテトチップスを中央に配置
+  potato.style.left = `50%`;
+  potato.style.transform = "translateX(-50%)"; // 横方向で中央に配置
+  potato.style.animation = "potatoFly 1s forwards"; // アニメーションを適用
+
+  potatoContainer.appendChild(potato);
+  setTimeout(() => potato.remove(), 1000); // 1秒後に削除
+  summonCount++;
+}
+
+
   // 新しい単語生成
   function generateWord() {
     const wordData = words[Math.floor(Math.random() * words.length)];
