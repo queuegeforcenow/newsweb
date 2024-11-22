@@ -30,6 +30,22 @@ document.addEventListener("DOMContentLoaded", () => {
     { japanese: "ありがとう", romaji: "arigatou" },
     { japanese: "こんにちは", romaji: "konnichiwa" },
     { japanese: "本を読む", romaji: "honwoyomu" },
+    { japanese: "おはようございます", romaji: "ohayougozaimasu" },
+    { japanese: "こちらを見ないでください", romaji: "kotirawominaidekudasai" },
+    { japanese: "お静かに", romaji: "osizukani" },
+    { japanese: "こんにちは、チー牛さん", romaji: "konnnitiha,chi-gyu-san" },
+    { japanese: "チー牛", romaji: "chi-gyuu" },
+    { japanese: "はい？", romaji: "hai?" },
+    { japanese: "そんなことして楽しい？", romaji: "sonnnakotositetanosii?" },
+    { japanese: "なんだよこれ", romaji: "nanndayokore" },
+    { japanese: "お前だろ", romaji: "omaedaro" },
+    { japanese: "なんだよー", romaji: "nanndayo-" },
+    { japanese: "(台パン)", romaji: "(daipan)" },
+    { japanese: "あとなんだろう", romaji: "atonanndarou" },
+    { japanese: "なんだろう...", romaji: "nanndarou..." },
+    { japanese: "例えば", romaji: "tatoeba" },
+    { japanese: "ふふふ", romaji: "fufufu" },
+    { japanese: "炙りましょう", romaji: "aburimasyou" },
   ];
 
   // 特殊ローマ字対応マッピング
