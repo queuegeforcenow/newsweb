@@ -174,8 +174,31 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (currentWord.startsWith('ltu') && inputChar === 'l') {
       currentWord = currentWord.slice(3); // ltu を削除
       inputChar = "っ"; // っに変換
+    } else if (currentWord.startsWith('si') && inputChar === 's') {
+      currentWord = currentWord.slice(2); // xu を削除
+      inputChar = "し"; // ぅに変換
+    } else if (currentWord.startsWith('shi') && inputChar === 's') {
+      currentWord = currentWord.slice(3); // xu を削除
+      inputChar = "し"; // ぅに変換
+    } else if (currentWord.startsWith('ti') && inputChar === 't') {
+      currentWord = currentWord.slice(2); // xu を削除
+      inputChar = "ち"; // ぅに変換
+    } else if (currentWord.startsWith('chi') && inputChar === 'c') {
+      currentWord = currentWord.slice(3); // xu を削除
+      inputChar = "ち"; // ぅに変換
+    } else if (currentWord.startsWith('zyu') && inputChar === 'z') {
+      currentWord = currentWord.slice(3); // xu を削除
+      inputChar = "じゅ"; // ぅに変換
+    } else if (currentWord.startsWith('jyu') && inputChar === 'j') {
+      currentWord = currentWord.slice(3); // xu を削除
+      inputChar = "じゅ"; // ぅに変換
+    } else if (currentWord.startsWith('hu') && inputChar === 'h') {
+      currentWord = currentWord.slice(2); // xu を削除
+      inputChar = "ふ"; // ぅに変換
+    } else if (currentWord.startsWith('fu') && inputChar === 'f') {
+      currentWord = currentWord.slice(2); // xu を削除
+      inputChar = "ふ"; // ぅに変換
     }
-
     // 一致した場合
     if (inputChar === currentWord.charAt(0)) {
       progress += 0.05;
