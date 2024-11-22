@@ -1,92 +1,73 @@
-/* styles.css */
-
-/* 基本スタイル */
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  margin: 0;
-  padding: 0;
+  background-color: #f8f9fa;
 }
 
-#title-screen {
-  background-color: #f8f8f8;
-  padding: 50px;
+#game-container {
+  margin: 20px auto;
+  width: 80%;
+  max-width: 600px;
 }
 
-#game-area {
-  padding: 20px;
-}
-
-/* 称号・コスチューム表示 */
-#costume-display {
-  margin-top: 10px;
-}
-
-/* スコアエリア */
-#header {
-  display: flex;
-  justify-content: space-between;
-  background: #eee;
-  padding: 10px;
-}
-
-/* 日本語とローマ字の表示 */
-#progress-area {
-  margin-top: 20px;
-  font-size: 1.5em;
-}
-
-/* タイピング入力エリア */
-#input-field {
-  margin-top: 20px;
-  padding: 10px;
-  width: 300px;
-  font-size: 1em;
-}
-
-/* コスチューム別スタイル */
-.costume-norishio {
-  background-color: #fff8e1;
-}
-
-.costume-konsome {
-  background-color: #ffe0b2;
-}
-
-.costume-bata-shoyu {
-  background-color: #d1c4e9;
-}
-
-.costume-wasabi {
-  background-color: #c8e6c9;
-}
-
-.costume-cheese {
-  background-color: #ffe082;
-}
-
-.costume-garlic {
-  background-color: #ffccbc;
-}
-
-.costume-karakuchi {
-  background-color: #ffab91;
-}
-
-#experience-bar {
+#progress-bar {
   width: 100%;
   height: 20px;
-  background-color: #ddd;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-  margin-top: 20px;
-  position: relative;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 10px 0;
 }
 
 #experience-progress {
   height: 100%;
-  background-color: #76c7c0;
-  width: 0%;
-  transition: width 0.2s;
-  border-radius: 5px;
+  width: 0;
+  background-color: #ffcc00;
+  transition: width 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+#potato-container {
+  position: relative;
+  height: 200px;
+}
+
+.potato {
+  position: absolute;
+  background-image: url('potato.png');
+  background-size: cover;
+  animation: float 2s ease-in-out forwards;
+}
+
+.potato.small {
+  width: 20px;
+  height: 20px;
+}
+
+.potato.medium {
+  width: 40px;
+  height: 40px;
+}
+
+.potato.large {
+  width: 60px;
+  height: 60px;
+}
+
+.potato.none {
+  display: none;
+}
+
+@keyframes float {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
 }
