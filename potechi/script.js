@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { japanese: "例えば", romaji: "tatoeba" },
     { japanese: "ふふふ", romaji: "fufufu" },
     { japanese: "炙りましょう", romaji: "aburimasyou" },
+    { japanese: "ポテトチップス", romaji: "potetochippusu" },
   ];
 
   // 特殊ローマ字対応マッピング
