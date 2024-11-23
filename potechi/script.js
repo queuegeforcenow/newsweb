@@ -32,6 +32,7 @@ function startGame() {
 
   // ゲームタイマーの開始
   gameInterval = setInterval(gameTick, 1000);
+  resultDiv.textContent = ''; // 結果をリセット
 }
 
 // ゲームの1秒ごとの処理
@@ -107,19 +108,9 @@ document.addEventListener('keydown', (event) => {
   const input = event.key.toLowerCase();
   
   // キーが正しく一致する場合
-  if (input === currentWord.toLowerCase()) {
-    addExp(); // 経験値追加
-    spawnPotato(); // ポテトチップス召喚
-  } else {
-    resetExp(); // 誤った入力で経験値リセット
-  }
+  addExp(); // 経験値追加
+  spawnPotato(); // ポテトチップス召喚
 });
-
-// 経験値をリセット
-function resetExp() {
-  exp = 0;
-  expBar.value = 0;
-}
 
 // 情報モーダルを開く
 document.getElementById('info-btn').addEventListener('click', () => {
