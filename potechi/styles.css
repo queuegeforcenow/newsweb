@@ -33,15 +33,7 @@ h1 {
   color: #555;
 }
 
-#input-field {
-  padding: 10px;
-  font-size: 16px;
-  margin-top: 20px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.status {
+#game-status {
   margin-top: 20px;
 }
 
@@ -95,7 +87,7 @@ button:hover {
   }
 }
 
-.info-modal {
+.info-modal, .settings-modal {
   display: none;
   position: fixed;
   top: 0;
@@ -116,12 +108,17 @@ button:hover {
   width: 300px;
 }
 
-#close-info-btn {
+#close-info-btn, #close-settings-btn {
   font-size: 24px;
   color: #aaa;
   cursor: pointer;
 }
 
-#close-info-btn:hover {
+#close-info-btn:hover, #close-settings-btn:hover {
   color: black;
+}
+
+select, input[type="range"] {
+  width: 80%;
+  margin-top: 10px;
 }
