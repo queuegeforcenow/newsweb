@@ -1,27 +1,29 @@
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f4f4f9;
+  background-color: #fff8e1; /* 黄色っぽい背景 */
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  color: #333;
 }
 
 .game-container {
   text-align: center;
-  background-color: white;
-  border-radius: 8px;
+  background-color: #fff3b0; /* 温かみのある黄色 */
+  border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 400px;
   position: relative;
+  border: 2px solid #ffcc00; /* 黄色の枠線 */
 }
 
 h1 {
   font-size: 24px;
-  color: #333;
+  color: #ffb300; /* 明るい黄色 */
 }
 
 .word-display {
@@ -41,13 +43,15 @@ progress {
   width: 100%;
   height: 20px;
   margin-top: 10px;
+  border-radius: 4px;
+  background-color: #f0e68c; /* 黄色の進捗バー */
 }
 
 button {
   padding: 10px 20px;
   font-size: 16px;
   margin-top: 20px;
-  background-color: #4CAF50;
+  background-color: #ffcc00; /* 明るい黄色 */
   color: white;
   border: none;
   cursor: pointer;
@@ -55,7 +59,7 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #ffb300; /* 明るい黄色のホバー効果 */
 }
 
 #potato-container {
@@ -69,7 +73,7 @@ button:hover {
 .potato {
   width: 50px;
   height: 50px;
-  background-color: yellow;
+  background-color: #ffeb3b; /* ポテトの黄色 */
   border-radius: 50%;
   position: absolute;
   bottom: 0;
@@ -121,4 +125,23 @@ button:hover {
 select, input[type="range"] {
   width: 80%;
   margin-top: 10px;
+}
+
+#start-btn {
+  background-color: #ffcc00; /* ゲーム開始ボタンの色 */
+  color: white;
+  border-radius: 4px;
+}
+
+#start-btn:hover {
+  background-color: #ffb300;
+}
+
+#info-btn, #settings-btn {
+  background-color: #ffd54f; /* 設定ボタン、情報ボタンの色 */
+  color: #333;
+}
+
+#info-btn:hover, #settings-btn:hover {
+  background-color: #ffb300;
 }
