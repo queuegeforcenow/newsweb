@@ -1,62 +1,35 @@
-let words = []; // 単語データを格納
-let currentWordIndex = 0;
-let currentWord = '';
-let exp = 0;
-let chips = 0;
-let highestLevel = 1;
-let highestChips = 0;
-let totalChips = 0; // 全体のポテトチップス数
-let levelUpThreshold = 100; // レベルアップの閾値
-let levelMultiplier = 1; // レベルに応じたポテトチップスの増加量
-
-let gameInterval;
-let gameDuration = 60; // ゲームの時間（秒）
-
+// ゲーム要素の取得
+const startBtn = document.getElementById('start-btn');
 const expBar = document.getElementById('exp-bar');
-const chipsCount = document.getElementById('chips-count');
-const resultDiv = document.getElementById('result');
 const potatoContainer = document.getElementById('potato-container');
-
-// 情報ボタンとモーダル
-const infoBtn = document.getElementById('info-btn');
+const resultDiv = document.getElementById('result');
 const infoModal = document.getElementById('info-modal');
-const closeInfoBtn = document.getElementById('close-info-btn');
-const totalChipsDisplay = document.getElementById('total-chips');
-const highestLevelDisplay = document.getElementById('highest-level');
-const highestChipsDisplay = document.getElementById('highest-chips');
-
-// 設定ボタンとモーダル
-const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
+const closeInfoBtn = document.getElementById('close-info-btn');
 const closeSettingsBtn = document.getElementById('close-settings-btn');
-const chipsSizeSelect = document.getElementById('chips-size');
-const volumeInput = document.getElementById('volume');
 
-// JSONファイルから単語データを読み込む
-fetch('tango.json')
-  .then(response => response.json())
-  .then(data => {
-    words = data;
-  })
-  .catch(error => {
-    console.error('Error loading JSON data:', error);
-  });
+// ゲーム変数
+let gameInterval;
+let gameDuration = 60; // ゲームの持続時間（秒）
+let exp = 0; // 経験値
+let levelMultiplier = 1; // レベルに応じたポテトチップス召喚数
+let chips = 0; // 召喚したポテトチップスの数
+let highestLevel = 1; // 最高レベル
+let highestChips = 0; // 最高ポテトチップス召喚数
+let totalChips = 0; // 累積ポテトチップス
 
-// ゲーム開始
-document.getElementById('start-btn').addEventListener('click', startGame);
-
-// ゲーム開始の処理
+// ゲーム開始処理
 function startGame() {
-  currentWordIndex = Math.floor(Math.random() * words.length);
-  const word = words[currentWordIndex];
-  currentWord = word.romaji[0]; // 最初のローマ字を選択
-  updateWordDisplay(word.jp, word.romaji);
+  exp = 0;
+  levelMultiplier = 1;
+  chips = 0;
+  gameDuration = 60;
+  totalChips = 0;
+  highestChips = 0;
 
-  exp = 0; // 経験値リセット
-  expBar.value = 0;
-  chips = 0; // チップス数リセット
-  chipsCount.textContent = chips;
-  
+  // ゲーム状態の初期化
+  startBtn.disabled = true;  // ゲーム開始ボタンを無効化
+
   // ゲームタイマーの開始
   gameInterval = setInterval(gameTick, 1000);
 }
@@ -65,12 +38,12 @@ function startGame() {
 function gameTick() {
   gameDuration--;
   if (gameDuration <= 0) {
-    clearInterval(gameInterval);
+    clearInterval(gameInterval);  // ゲーム終了
     endGame();
   }
 }
 
-// 経験値追加
+// 経験値の追加
 function addExp() {
   exp += levelMultiplier * 10; // レベルに応じて増える
   expBar.value = exp;
@@ -78,12 +51,6 @@ function addExp() {
     exp = 0;
     levelUp();
   }
-}
-
-// 経験値リセット
-function resetExp() {
-  exp = 0;
-  expBar.value = exp;
 }
 
 // ポテトチップス召喚
@@ -97,68 +64,83 @@ function spawnPotato() {
     potato.addEventListener('animationend', () => {
       potatoContainer.removeChild(potato);
     });
+
+    chips++;
+    totalChips++;
+    highestChips = Math.max(highestChips, chips);
   }
 }
 
-// レベルアップ
+// レベルアップ処理
 function levelUp() {
   highestLevel = Math.max(highestLevel, exp / 100 + 1);
   levelMultiplier = Math.floor(highestLevel); // レベルに応じてポテトチップス増加量を設定
-  if (chips > highestChips) {
-    highestChips = chips;
-  }
-  totalChips += chips;
-
-  document.cookie = `highestLevel=${highestLevel}`;
-  document.cookie = `highestChips=${highestChips}`;
-  document.cookie = `totalChips=${totalChips}`;
-  highestLevelDisplay.textContent = highestLevel;
-  highestChipsDisplay.textContent = highestChips;
-  totalChipsDisplay.textContent = totalChips;
 }
 
 // ゲーム終了
 function endGame() {
-  resultDiv.textContent = `ゲーム終了! ポテトチップスの数: ${chips}`;
-  document.getElementById('start-btn').disabled = false;
+  resultDiv.textContent = `ゲーム終了! ポテトチップスの数: ${chips}（最高レベル: ${highestLevel}）`;
+  saveGameProgress(); // ゲームの進行状況を保存
+  startBtn.disabled = false;  // ゲーム開始ボタンを有効化
 }
 
-// 情報モーダルを開く
-infoBtn.addEventListener('click', () => {
-  infoModal.style.display = 'flex';
-  const cookies = document.cookie.split(';');
+// ゲーム進行状況の保存（Cookie）
+function saveGameProgress() {
+  document.cookie = `totalChips=${totalChips}; path=/; max-age=31536000`;
+  document.cookie = `highestLevel=${highestLevel}; path=/; max-age=31536000`;
+  document.cookie = `highestChips=${highestChips}; path=/; max-age=31536000`;
+}
+
+// ゲーム進行状況の読み込み（Cookie）
+function loadGameProgress() {
+  const cookies = document.cookie.split('; ');
   cookies.forEach(cookie => {
-    const [key, value] = cookie.trim().split('=');
-    if (key === 'highestLevel') highestLevelDisplay.textContent = value;
-    if (key === 'highestChips') highestChipsDisplay.textContent = value;
-    if (key === 'totalChips') totalChipsDisplay.textContent = value;
+    const [key, value] = cookie.split('=');
+    if (key === 'totalChips') totalChips = parseInt(value);
+    if (key === 'highestLevel') highestLevel = parseInt(value);
+    if (key === 'highestChips') highestChips = parseInt(value);
   });
-});
-
-// 情報モーダルを閉じる
-closeInfoBtn.addEventListener('click', () => {
-  infoModal.style.display = 'none';
-});
-
-// 設定モーダルを開く
-settingsBtn.addEventListener('click', () => {
-  settingsModal.style.display = 'flex';
-});
-
-// 設定モーダルを閉じる
-closeSettingsBtn.addEventListener('click', () => {
-  settingsModal.style.display = 'none';
-});
+}
 
 // キー入力の処理
 document.addEventListener('keydown', (event) => {
   const input = event.key.toLowerCase();
-
-  // ローマ字が一致するか確認
+  
+  // キーが正しく一致する場合
   if (input === currentWord.toLowerCase()) {
-    addExp();
-    spawnPotato();
+    addExp(); // 経験値追加
+    spawnPotato(); // ポテトチップス召喚
   } else {
-    resetExp();
+    resetExp(); // 誤った入力で経験値リセット
   }
 });
+
+// 経験値をリセット
+function resetExp() {
+  exp = 0;
+  expBar.value = 0;
+}
+
+// 情報モーダルを開く
+document.getElementById('info-btn').addEventListener('click', () => {
+  infoModal.style.display = 'flex';
+});
+
+// 設定モーダルを開く
+document.getElementById('settings-btn').addEventListener('click', () => {
+  settingsModal.style.display = 'flex';
+});
+
+// モーダルの閉じるボタン
+closeInfoBtn.addEventListener('click', () => {
+  infoModal.style.display = 'none';
+});
+closeSettingsBtn.addEventListener('click', () => {
+  settingsModal.style.display = 'none';
+});
+
+// ゲーム開始ボタンがクリックされたときにstartGame()を呼び出す
+startBtn.addEventListener('click', startGame);
+
+// ゲーム開始時に進行状況を読み込み
+window.onload = loadGameProgress;
