@@ -82,56 +82,43 @@ function levelUp() {
 function endGame() {
   resultDiv.textContent = `ゲーム終了! ポテトチップスの数: ${chips}（最高レベル: ${highestLevel}）`;
   saveGameProgress(); // ゲームの進行状況を保存
-  startBtn.disabled = false;  // ゲーム開始ボタンを有効化
+  startBtn.disabled = false;  // 再度ゲーム開始ボタンを有効化
 }
 
-// ゲーム進行状況の保存（Cookie）
+// ゲーム進行状況を保存
 function saveGameProgress() {
-  document.cookie = `totalChips=${totalChips}; path=/; max-age=31536000`;
-  document.cookie = `highestLevel=${highestLevel}; path=/; max-age=31536000`;
-  document.cookie = `highestChips=${highestChips}; path=/; max-age=31536000`;
+  localStorage.setItem('chips', totalChips);
+  localStorage.setItem('highestLevel', highestLevel);
+  localStorage.setItem('highestChips', highestChips);
 }
 
-// ゲーム進行状況の読み込み（Cookie）
+// ゲーム進行状況をロード
 function loadGameProgress() {
-  const cookies = document.cookie.split('; ');
-  cookies.forEach(cookie => {
-    const [key, value] = cookie.split('=');
-    if (key === 'totalChips') totalChips = parseInt(value);
-    if (key === 'highestLevel') highestLevel = parseInt(value);
-    if (key === 'highestChips') highestChips = parseInt(value);
-  });
+  const chips = localStorage.getItem('chips');
+  const highestLevel = localStorage.getItem('highestLevel');
+  const highestChips = localStorage.getItem('highestChips');
+  
+  document.getElementById('info-chips').textContent = chips || 0;
+  document.getElementById('info-level').textContent = highestLevel || 1;
+  document.getElementById('info-highest-chips').textContent = highestChips || 0;
 }
 
-// キー入力の処理
-document.addEventListener('keydown', (event) => {
-  const input = event.key.toLowerCase();
-  
-  // キーが正しく一致する場合
-  addExp(); // 経験値追加
-  spawnPotato(); // ポテトチップス召喚
-});
-
-// 情報モーダルを開く
+// モーダル開閉
 document.getElementById('info-btn').addEventListener('click', () => {
   infoModal.style.display = 'flex';
 });
 
-// 設定モーダルを開く
 document.getElementById('settings-btn').addEventListener('click', () => {
   settingsModal.style.display = 'flex';
 });
 
-// モーダルの閉じるボタン
 closeInfoBtn.addEventListener('click', () => {
   infoModal.style.display = 'none';
 });
+
 closeSettingsBtn.addEventListener('click', () => {
   settingsModal.style.display = 'none';
 });
 
 // ゲーム開始ボタンがクリックされたときにstartGame()を呼び出す
 startBtn.addEventListener('click', startGame);
-
-// ゲーム開始時に進行状況を読み込み
-window.onload = loadGameProgress;
