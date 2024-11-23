@@ -1,179 +1,127 @@
-/* 全体のスタイル */
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: linear-gradient(45deg, #f39c12, #f1c40f, #f39c12);
-  background-size: 300% 300%;
-  animation: gradientAnimation 10s ease infinite;
-  color: #ffffff;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* グラデーションアニメーション */
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* ゲームコンテナ */
-#game-container {
-  background-color: rgba(0, 0, 0, 0.7);
+.game-container {
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
   padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-  width: 80%;
-  max-width: 600px;
-  margin: 10px;
-}
-
-/* 設定メニュー */
-#settings-menu {
-  background-color: #ffffff;
-  color: #333;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  display: inline-block;
-}
-
-/* プログレスバー */
-#progress-bar {
-  width: 100%;
-  height: 20px;
-  background-color: #444;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 10px 0;
-}
-
-#experience-progress {
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, #16a085, #2ecc71);
-  border-radius: 10px;
-  transition: width 0.3s ease;
-}
-
-/* ボタンスタイル */
-button {
-  background-color: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #c0392b;
-}
-
-/* タイピング単語の表示 */
-#japanese-display,
-#current-word {
-  font-size: 24px;
-  margin: 10px 0;
-  color: #f1c40f;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-}
-
-/* タイマーとスコア */
-#timer-display,
-#score-display {
-  font-size: 20px;
-  color: #ecf0f1;
-}
-
-/* ポテトコンテナ */
-#potato-container {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 400px;
   position: relative;
-  height: 200px;
-  overflow: hidden;
+}
+
+h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+.word-display {
+  margin: 20px 0;
+}
+
+.current-word-jp, .current-word-romaji {
+  font-size: 20px;
+  color: #555;
+}
+
+#input-field {
+  padding: 10px;
+  font-size: 16px;
+  margin-top: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.status {
   margin-top: 20px;
 }
 
-/* ポテト */
-@keyframes potatoFly {
-  0% {
-    top: 100%;
-    opacity: 1;
-  }
-  50% {
-    top: 40%;
-    opacity: 0.7;
-  }
-  100% {
-    top: -20%;
-    opacity: 0;
-  }
+progress {
+  width: 100%;
+  height: 20px;
+  margin-top: 10px;
 }
 
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+#potato-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none; /* 初期状態では非表示 */
+}
 
 .potato {
-  position: absolute;
-  background-image: url('potato.png');
-  background-size: cover;
-  animation: float 2s ease-in-out forwards;
+  width: 50px;
+  height: 50px;
+  background-color: yellow;
   border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  animation: potatoAnimation 1s forwards;
 }
 
-.potato.small {
-  width: 20px;
-  height: 20px;
-}
-
-.potato.medium {
-  width: 40px;
-  height: 40px;
-}
-
-.potato.large {
-  width: 60px;
-  height: 60px;
-}
-
-.potato.none {
-  display: none;
-}
-
-/* ポテトの浮き上がるアニメーション */
-@keyframes float {
-  from {
-    transform: translateY(0);
+@keyframes potatoAnimation {
+  0% {
+    bottom: 0;
     opacity: 1;
   }
-  to {
-    transform: translateY(-150px);
+  100% {
+    bottom: 100px;
     opacity: 0;
   }
 }
 
-/* メディアクエリでレスポンシブ対応 */
-@media (max-width: 600px) {
-  #game-container {
-    width: 95%;
-  }
-  #japanese-display,
-  #current-word {
-    font-size: 20px;
-  }
-  #timer-display,
-  #score-display {
-    font-size: 18px;
-  }
+.info-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 300px;
+}
+
+#close-info-btn {
+  font-size: 24px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+#close-info-btn:hover {
+  color: black;
 }
