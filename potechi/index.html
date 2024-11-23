@@ -15,15 +15,14 @@
       <div class="current-word-romaji">ローマ字: </div>
     </div>
 
-    <input type="text" id="input-field" placeholder="ローマ字を入力">
-
-    <div class="status">
+    <div id="game-status">
       <div>経験値: <progress id="exp-bar" value="0" max="100"></progress></div>
       <div>ポテトチップス数: <span id="chips-count">0</span></div>
     </div>
 
     <button id="start-btn">ゲーム開始</button>
     <button id="info-btn">情報</button> <!-- 情報ボタンを追加 -->
+    <button id="settings-btn">設定変更</button> <!-- 設定ボタンを追加 -->
     
     <div id="result"></div>
     
@@ -37,6 +36,24 @@
         <p>これまでに召喚したポテトチップスの数: <span id="total-chips">0</span></p>
         <p>最高レベル: <span id="highest-level">1</span></p>
         <p>最高ポテトチップス召喚数: <span id="highest-chips">0</span></p>
+      </div>
+    </div>
+
+    <!-- 設定変更モーダル -->
+    <div id="settings-modal" class="settings-modal">
+      <div class="modal-content">
+        <span id="close-settings-btn">&times;</span>
+        <h2>設定変更</h2>
+        <label for="chips-size">ポテトチップスの大きさ:</label>
+        <select id="chips-size">
+          <option value="small">小</option>
+          <option value="medium">中</option>
+          <option value="large">大</option>
+          <option value="none">なし</option>
+        </select>
+        <br><br>
+        <label for="volume">音量:</label>
+        <input type="range" id="volume" min="0" max="100" value="50">
       </div>
     </div>
   </div>
