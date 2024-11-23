@@ -6,6 +6,8 @@ let chips = 0;
 let highestLevel = 1;
 let highestChips = 0;
 let totalChips = 0; // 全体のポテトチップス数
+let levelUpThreshold = 100; // レベルアップの閾値
+let levelMultiplier = 1; // レベルに応じたポテトチップスの増加量
 
 let gameInterval;
 let gameDuration = 60; // ゲームの時間（秒）
@@ -54,46 +56,26 @@ function startGame() {
   expBar.value = 0;
   chips = 0; // チップス数リセット
   chipsCount.textContent = chips;
-
-  resultDiv.textContent = ''; // 結果をリセット
-
-  // ゲームのタイマー開始
-  let timeRemaining = gameDuration;
-  const timer = setInterval(() => {
-    timeRemaining--;
-    if (timeRemaining <= 0) {
-      clearInterval(timer);
-      endGame();
-    }
-  }, 1000);
+  
+  // ゲームタイマーの開始
+  gameInterval = setInterval(gameTick, 1000);
 }
 
-// 単語の表示を更新
-function updateWordDisplay(japanese, romaji) {
-  document.querySelector('.current-word-jp').textContent = `日本語: ${japanese}`;
-  document.querySelector('.current-word-romaji').textContent = `ローマ字: ${romaji}`;
-}
-
-// 入力のチェック (全体で反応)
-document.body.addEventListener('keydown', (event) => {
-  const input = event.key.toLowerCase();
-
-  // ローマ字が一致するか確認
-  if (input === currentWord.toLowerCase()) {
-    addExp();
-    spawnPotato();
-    levelUp();
-  } else {
-    resetExp();
+// ゲームの1秒ごとの処理
+function gameTick() {
+  gameDuration--;
+  if (gameDuration <= 0) {
+    clearInterval(gameInterval);
+    endGame();
   }
-});
+}
 
-// 経験値を追加
+// 経験値追加
 function addExp() {
-  exp += 10;
+  exp += levelMultiplier * 10; // レベルに応じて増える
   expBar.value = exp;
   if (exp >= 100) {
-    exp = 0; // 経験値満タンでリセット
+    exp = 0;
     levelUp();
   }
 }
@@ -104,21 +86,24 @@ function resetExp() {
   expBar.value = exp;
 }
 
-// ポテトチップスを召喚
+// ポテトチップス召喚
 function spawnPotato() {
-  const potato = document.createElement('div');
-  potato.classList.add('potato');
-  potatoContainer.appendChild(potato);
-  potatoContainer.style.display = 'block'; // アニメーション用に表示
+  for (let i = 0; i < levelMultiplier; i++) {
+    const potato = document.createElement('div');
+    potato.classList.add('potato');
+    potatoContainer.appendChild(potato);
+    potatoContainer.style.display = 'block';
 
-  potato.addEventListener('animationend', () => {
-    potatoContainer.removeChild(potato);
-  });
+    potato.addEventListener('animationend', () => {
+      potatoContainer.removeChild(potato);
+    });
+  }
 }
 
 // レベルアップ
 function levelUp() {
   highestLevel = Math.max(highestLevel, exp / 100 + 1);
+  levelMultiplier = Math.floor(highestLevel); // レベルに応じてポテトチップス増加量を設定
   if (chips > highestChips) {
     highestChips = chips;
   }
@@ -163,4 +148,17 @@ settingsBtn.addEventListener('click', () => {
 // 設定モーダルを閉じる
 closeSettingsBtn.addEventListener('click', () => {
   settingsModal.style.display = 'none';
+});
+
+// キー入力の処理
+document.addEventListener('keydown', (event) => {
+  const input = event.key.toLowerCase();
+
+  // ローマ字が一致するか確認
+  if (input === currentWord.toLowerCase()) {
+    addExp();
+    spawnPotato();
+  } else {
+    resetExp();
+  }
 });
