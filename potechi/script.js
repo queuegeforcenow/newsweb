@@ -1,214 +1,152 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const startButton = document.getElementById("start-button");
-  const settingsButton = document.getElementById("settings-button");
-  const saveSettingsButton = document.getElementById("save-settings");
-  const gameArea = document.getElementById("game-area");
-  const currentWordDisplay = document.getElementById("current-word");
-  const japaneseDisplay = document.getElementById("japanese-display");
-  const scoreDisplay = document.getElementById("score-display");
-  const levelDisplay = document.getElementById("level-display");
-  const timerDisplay = document.getElementById("timer-display");
-  const experienceProgress = document.getElementById("experience-progress");
-  const potatoContainer = document.getElementById("potato-container");
-  const successSound = document.getElementById("success-sound");
+let words = []; // 単語データを格納
+let currentWordIndex = 0;
+let currentWord = '';
+let exp = 0;
+let chips = 0;
+let highestLevel = 1;
+let highestChips = 0;
+let totalChips = 0; // 全体のポテトチップス数
 
-  const potatoSizeSelect = document.getElementById("potato-size");
-  const volumeSlider = document.getElementById("volume-slider");
+let gameInterval;
+let gameDuration = 60; // ゲームの時間（秒）
 
-  let score = 0;
-  let summonCount = 0;
-  let currentLevel = 1;
-  let timer = 60;
-  let progress = 0;
-  let currentWord = "";
-  let currentJapanese = "";
-  let timerInterval = null;
+const inputField = document.getElementById('input-field');
+const expBar = document.getElementById('exp-bar');
+const chipsCount = document.getElementById('chips-count');
+const resultDiv = document.getElementById('result');
+const potatoContainer = document.getElementById('potato-container');
 
-  const words = [
-    { japanese: "犬", romaji: "inu" },
-    { japanese: "ゲーム", romaji: "ge-mu" },
-    { japanese: "ありがとう", romaji: "arigatou" },
-    { japanese: "こんにちは", romaji: "konnichiwa" },
-    { japanese: "本を読む", romaji: "honwoyomu" },
-    { japanese: "おはようございます", romaji: "ohayougozaimasu" },
-    { japanese: "こちらを見ないでください", romaji: "kotirawominaidekudasai" },
-    { japanese: "お静かに", romaji: "osizukani" },
-    { japanese: "こんにちは、チー牛さん", romaji: "konnnitiha,chi-gyu-san" },
-    { japanese: "チー牛", romaji: "chi-gyuu" },
-    { japanese: "はい？", romaji: "hai?" },
-    { japanese: "そんなことして楽しい？", romaji: "sonnnakotositetanosii?" },
-    { japanese: "なんだよこれ", romaji: "nanndayokore" },
-    { japanese: "お前だろ", romaji: "omaedaro" },
-    { japanese: "なんだよー", romaji: "nanndayo-" },
-    { japanese: "(台パン)", romaji: "(daipan)" },
-    { japanese: "あとなんだろう", romaji: "atonanndarou" },
-    { japanese: "なんだろう...", romaji: "nanndarou..." },
-    { japanese: "例えば", romaji: "tatoeba" },
-    { japanese: "ふふふ", romaji: "fufufu" },
-    { japanese: "炙りましょう", romaji: "aburimasyou" },
-    { japanese: "ポテトチップス", romaji: "potetochippusu" },
-  ];
+// 情報ボタンとモーダル
+const infoBtn = document.getElementById('info-btn');
+const infoModal = document.getElementById('info-modal');
+const closeInfoBtn = document.getElementById('close-info-btn');
+const totalChipsDisplay = document.getElementById('total-chips');
+const highestLevelDisplay = document.getElementById('highest-level');
+const highestChipsDisplay = document.getElementById('highest-chips');
 
-  // 特殊ローマ字対応マッピング
-  const romajiAlternatives = {
-    nn: ["n"],
-    xtu: ["ltu", "ttu"],
-    xa: ["la"],
-    xu: ["lu"],
-    xi: ["li"],
-    xe: ["le"],
-    xo: ["lo"],
-  };
+// JSONファイルから単語データを読み込む
+fetch('tango.json')
+  .then(response => response.json())
+  .then(data => {
+    words = data;
+  })
+  .catch(error => {
+    console.error('Error loading JSON data:', error);
+  });
 
-  // 入力判定
-  function isCorrectInput(input, target) {
-    if (input === target) return true;
-    const alternatives = romajiAlternatives[target];
-    return alternatives ? alternatives.includes(input) : false;
+// ゲーム開始
+document.getElementById('start-btn').addEventListener('click', startGame);
+
+// ゲーム開始の処理
+function startGame() {
+  currentWordIndex = Math.floor(Math.random() * words.length);
+  const word = words[currentWordIndex];
+  currentWord = word.romaji[0]; // 最初のローマ字を選択
+  updateWordDisplay(word.jp, word.romaji);
+
+  exp = 0; // 経験値リセット
+  expBar.value = 0;
+  chips = 0; // チップス数リセット
+  chipsCount.textContent = chips;
+
+  resultDiv.textContent = ''; // 結果をリセット
+  inputField.value = ''; // 入力フィールドをリセット
+  inputField.focus(); // 入力フィールドにフォーカスを当てる
+
+  // ゲームのタイマー開始
+  let timeRemaining = gameDuration;
+  const timer = setInterval(() => {
+    timeRemaining--;
+    if (timeRemaining <= 0) {
+      clearInterval(timer);
+      endGame();
+    }
+  }, 1000);
+}
+
+// 単語の表示を更新
+function updateWordDisplay(japanese, romaji) {
+  document.querySelector('.current-word-jp').textContent = `日本語: ${japanese}`;
+  document.querySelector('.current-word-romaji').textContent = `ローマ字: ${romaji}`;
+}
+
+// 入力のチェック
+inputField.addEventListener('input', function() {
+  const userInput = inputField.value.toLowerCase().trim();
+
+  if (words[currentWordIndex].romaji.includes(userInput)) {
+    exp += 10;
+    if (exp >= 100) {
+      levelUp(); // レベルアップ
+    }
+    expBar.value = exp;
+    chips++; // チップスの数を増加
+    chipsCount.textContent = chips;
+
+    // ポテトチップスのアニメーション
+    showPotatoAnimation();
+
+    // 新しい単語を生成
+    currentWordIndex = Math.floor(Math.random() * words.length);
+    const word = words[currentWordIndex];
+    currentWord = word.romaji[0];
+    updateWordDisplay(word.jp, word.romaji);
+    inputField.value = ''; // 入力フィールドをリセット
   }
+});
 
-  function summonPotato() {
-  const potato = document.createElement("div");
-  const size = potatoSizeSelect.value; // ポテトチップスのサイズ設定
-  potato.classList.add("potato", size);
-
-  // ポテトチップスを画面中央に配置
-  potato.style.left = `50%`; // 横中央
-  potato.style.transform = "translateX(-50%)"; // 水平位置を中央に
-
-  // アニメーションの適用 (CSS で設定した "potatoFly" アニメーション)
-  potato.style.animation = "potatoFly 1s forwards";
-
-  // ポテトチップスを表示
+// ポテトチップスのアニメーション
+function showPotatoAnimation() {
+  const potato = document.createElement('div');
+  potato.classList.add('potato');
   potatoContainer.appendChild(potato);
 
-  // 1秒後にポテトチップスを削除
-  setTimeout(() => potato.remove(), 1000); 
-
-  summonCount++; // 召喚数をカウント
-}
-
-  function handleInput(e) {
-  const input = e.key.toLowerCase();
-  const targetChar = currentWord[0];
-
-  if (isCorrectInput(input, targetChar)) {
-    currentWord = currentWord.slice(1);
-    score++;
-    progress += 0.1;
-    successSound.play();
-
-    // 正解入力後、ポテトチップスを召喚
-    summonPotato();
-
-    if (progress >= 1) {
-      progress = 0;
-      currentLevel++;
-    }
-
-    if (currentWord.length === 0) {
-      generateWord();
-    }
-  } else {
-    progress = 0;
-  }
-  updateDisplay();
-}
-
-
-  // 新しい単語生成
-  function generateWord() {
-    const wordData = words[Math.floor(Math.random() * words.length)];
-    currentWord = wordData.romaji;
-    currentJapanese = wordData.japanese;
-    updateDisplay();
-  }
-
-  // ゲームの進行状況を更新
-  function updateDisplay() {
-    currentWordDisplay.textContent = currentWord;
-    japaneseDisplay.textContent = currentJapanese;
-    scoreDisplay.textContent = score;
-    levelDisplay.textContent = currentLevel;
-    timerDisplay.textContent = timer;
-    experienceProgress.style.width = `${progress * 100}%`;
-  }
-
-  // 入力ハンドリング
-  function handleInput(e) {
-    const input = e.key.toLowerCase();
-    const targetChar = currentWord[0];
-
-    if (isCorrectInput(input, targetChar)) {
-      currentWord = currentWord.slice(1);
-      score++;
-      progress += 0.1;
-      successSound.play();
-
-      if (progress >= 1) {
-        progress = 0;
-        currentLevel++;
-      }
-
-      if (currentWord.length === 0) {
-        generateWord();
-        summonPotato();
-      }
-    } else {
-      progress = 0;
-    }
-    updateDisplay();
-  }
-
-  // ポテトチップスの召喚
-  function summonPotato() {
-    const potato = document.createElement("div");
-    const size = potatoSizeSelect.value;
-    potato.classList.add("potato", size);
-    potato.style.left = `${Math.random() * 80}%`;
-    potatoContainer.appendChild(potato);
-    setTimeout(() => potato.remove(), 2000);
-    summonCount++;
-  }
-
-  // ゲーム開始
-  function startGame() {
-    resetGame();
-    generateWord();
-    gameArea.classList.remove("hidden");
-    timerInterval = setInterval(() => {
-      timer--;
-      if (timer <= 0) endGame();
-      updateDisplay();
-    }, 1000);
-  }
-
-  // ゲームリセット
-  function resetGame() {
-    score = 0;
-    summonCount = 0;
-    currentLevel = 1;
-    timer = 60;
-    progress = 0;
-    updateDisplay();
-  }
-
-  // ゲーム終了
-  function endGame() {
-    clearInterval(timerInterval);
-    alert(`ゲーム終了！スコア: ${score}`);
-  }
-
-  // 設定保存
-  function saveSettings() {
-    successSound.volume = parseFloat(volumeSlider.value);
-  }
-
-  // イベントリスナー
-  startButton.addEventListener("click", startGame);
-  settingsButton.addEventListener("click", () => {
-    document.getElementById("settings-menu").classList.toggle("hidden");
+  // アニメーション完了後にポテトを削除
+  potato.addEventListener('animationend', () => {
+    potatoContainer.removeChild(potato);
   });
-  saveSettingsButton.addEventListener("click", saveSettings);
-  document.addEventListener("keydown", handleInput);
+}
+
+// レベルアップ処理
+function levelUp() {
+  highestLevel = Math.max(highestLevel, exp / 100 + 1);
+  if (chips > highestChips) {
+    highestChips = chips;
+  }
+  totalChips += chips;
+
+  // Cookieにデータを保存
+  document.cookie = `highestLevel=${highestLevel}`;
+  document.cookie = `highestChips=${highestChips}`;
+  document.cookie = `totalChips=${totalChips}`;
+
+  // 高いレベルの表示
+  highestLevelDisplay.textContent = highestLevel;
+  highestChipsDisplay.textContent = highestChips;
+  totalChipsDisplay.textContent = totalChips;
+}
+
+// ゲーム終了
+function endGame() {
+  resultDiv.textContent = `ゲーム終了! ポテトチップスの数: ${chips}`;
+  inputField.disabled = true;
+  document.getElementById('start-btn').disabled = false; // ゲーム開始ボタンを再び有効化
+}
+
+// 情報ボタンのクリック処理
+infoBtn.addEventListener('click', () => {
+  infoModal.style.display = 'flex';
+  // Cookieから情報を読み込む
+  const cookies = document.cookie.split(';');
+  cookies.forEach(cookie => {
+    const [key, value] = cookie.trim().split('=');
+    if (key === 'highestLevel') highestLevelDisplay.textContent = value;
+    if (key === 'highestChips') highestChipsDisplay.textContent = value;
+    if (key === 'totalChips') totalChipsDisplay.textContent = value;
+  });
+});
+
+// モーダルの閉じるボタン
+closeInfoBtn.addEventListener('click', () => {
+  infoModal.style.display = 'none';
 });
