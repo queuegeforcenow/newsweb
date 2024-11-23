@@ -1,0 +1,23 @@
+[
+  { "jp": "りんご", "romaji": ["ringo", "rinngo"] },
+  { "jp": "みかん", "romaji": ["mikan", "mikann"] },
+  { "jp": "ぶどう", "romaji": ["budou"] },
+  { "jp": "梨", "romaji": ["nashi", "nasi"] },
+  { "jp": "いちご", "romaji": ["ichigo", "itigo"] },
+  { "jp": "スイカ", "romaji": ["suika"] },
+  { "jp": "バナナ", "romaji": ["banana"] },
+  { "jp": "さくらんぼ", "romaji": ["sakuranbo", "sakurannbo"] },
+  { "jp": "パイナップル", "romaji": ["painappuru", "painaltupuru", "painappulu", "painaltupulu"] },
+  { "jp": "レモン", "romaji": ["remon", "remonn"] }
+  { "jp": "ポテトチップス", "romaji": ["potetotippusu", "potetochippusu", "potetotiltupusu", "potetochiltupusu"] },
+  { "jp": "お静かに", "romaji": ["osizukani", "oshizukani"] },
+  { "jp": "わからない", "romaji": ["wakaranai"] },
+  { "jp": "タイピング", "romaji": ["taipinngu", "taipingu"] },
+  { "jp": "花火", "romaji": ["hanabi"] },
+  { "jp": "ぶどう", "romaji": ["budou"] },
+  { "jp": "えー難しいな", "romaji": ["e-muzukasiina", "e-muzukashiina"] },
+  { "jp": "ポテチの原料はポテト", "romaji": ["potetinogenryouhapoteto", "potechinogenryouhapoteto"] },
+  { "jp": "この世はポテトでできている", "romaji": ["konoyohapotetodedekiteiru", "konoyohapotetodedekiteilu"] },
+  { "jp": "ご飯が食べたい", "romaji": ["gohangatabetai", "gohanngatabetai"] },
+
+]
