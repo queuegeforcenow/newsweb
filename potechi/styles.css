@@ -1,0 +1,163 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #ffeb3b;
+  padding: 20px;
+  margin: 0;
+}
+
+#game {
+  margin-top: 50px;
+}
+
+#exp-bar-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#exp-bar {
+  width: 200px;
+}
+
+#potato-container {
+  position: relative;
+  height: 100px;
+  margin-top: 20px;
+}
+
+.potato {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: yellow;
+  border-radius: 50%;
+  animation: potatoFly 1s forwards;
+}
+
+@keyframes potatoFly {
+  0% {
+    bottom: 0;
+  }
+  100% {
+    bottom: 100%;
+    opacity: 0;
+  }
+}
+
+button, .modal-content {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: grey;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: white;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close-btn {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#start-btn {
+  font-size: 20px;
+  padding: 15px 30px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+#start-btn:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+}
+
+#level {
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+#info-btn, #settings-btn {
+  margin-top: 20px;
+  background-color: #2196F3;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#info-btn:hover, #settings-btn:hover {
+  background-color: #0b7dda;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#info-modal, #settings-modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#info-modal .modal-content, #settings-modal .modal-content {
+  position: relative;
+  width: 50%;
+  margin: auto;
+  background-color: white;
+  padding: 20px;
+}
+
+#close-info-btn, #close-settings-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+#close-info-btn:hover, #close-settings-btn:hover {
+  color: red;
+}
