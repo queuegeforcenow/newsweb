@@ -10,7 +10,6 @@ let totalChips = 0; // 全体のポテトチップス数
 let gameInterval;
 let gameDuration = 60; // ゲームの時間（秒）
 
-const inputField = document.getElementById('input-field');
 const expBar = document.getElementById('exp-bar');
 const chipsCount = document.getElementById('chips-count');
 const resultDiv = document.getElementById('result');
@@ -23,6 +22,13 @@ const closeInfoBtn = document.getElementById('close-info-btn');
 const totalChipsDisplay = document.getElementById('total-chips');
 const highestLevelDisplay = document.getElementById('highest-level');
 const highestChipsDisplay = document.getElementById('highest-chips');
+
+// 設定ボタンとモーダル
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const closeSettingsBtn = document.getElementById('close-settings-btn');
+const chipsSizeSelect = document.getElementById('chips-size');
+const volumeInput = document.getElementById('volume');
 
 // JSONファイルから単語データを読み込む
 fetch('tango.json')
@@ -50,8 +56,6 @@ function startGame() {
   chipsCount.textContent = chips;
 
   resultDiv.textContent = ''; // 結果をリセット
-  inputField.value = ''; // 入力フィールドをリセット
-  inputField.focus(); // 入力フィールドにフォーカスを当てる
 
   // ゲームのタイマー開始
   let timeRemaining = gameDuration;
@@ -70,44 +74,49 @@ function updateWordDisplay(japanese, romaji) {
   document.querySelector('.current-word-romaji').textContent = `ローマ字: ${romaji}`;
 }
 
-// 入力のチェック
-inputField.addEventListener('input', function() {
-  const userInput = inputField.value.toLowerCase().trim();
+// 入力のチェック (全体で反応)
+document.body.addEventListener('keydown', (event) => {
+  const input = event.key.toLowerCase();
 
-  if (words[currentWordIndex].romaji.includes(userInput)) {
-    exp += 10;
-    if (exp >= 100) {
-      levelUp(); // レベルアップ
-    }
-    expBar.value = exp;
-    chips++; // チップスの数を増加
-    chipsCount.textContent = chips;
-
-    // ポテトチップスのアニメーション
-    showPotatoAnimation();
-
-    // 新しい単語を生成
-    currentWordIndex = Math.floor(Math.random() * words.length);
-    const word = words[currentWordIndex];
-    currentWord = word.romaji[0];
-    updateWordDisplay(word.jp, word.romaji);
-    inputField.value = ''; // 入力フィールドをリセット
+  // ローマ字が一致するか確認
+  if (input === currentWord.toLowerCase()) {
+    addExp();
+    spawnPotato();
+    levelUp();
+  } else {
+    resetExp();
   }
 });
 
-// ポテトチップスのアニメーション
-function showPotatoAnimation() {
+// 経験値を追加
+function addExp() {
+  exp += 10;
+  expBar.value = exp;
+  if (exp >= 100) {
+    exp = 0; // 経験値満タンでリセット
+    levelUp();
+  }
+}
+
+// 経験値リセット
+function resetExp() {
+  exp = 0;
+  expBar.value = exp;
+}
+
+// ポテトチップスを召喚
+function spawnPotato() {
   const potato = document.createElement('div');
   potato.classList.add('potato');
   potatoContainer.appendChild(potato);
+  potatoContainer.style.display = 'block'; // アニメーション用に表示
 
-  // アニメーション完了後にポテトを削除
   potato.addEventListener('animationend', () => {
     potatoContainer.removeChild(potato);
   });
 }
 
-// レベルアップ処理
+// レベルアップ
 function levelUp() {
   highestLevel = Math.max(highestLevel, exp / 100 + 1);
   if (chips > highestChips) {
@@ -115,12 +124,9 @@ function levelUp() {
   }
   totalChips += chips;
 
-  // Cookieにデータを保存
   document.cookie = `highestLevel=${highestLevel}`;
   document.cookie = `highestChips=${highestChips}`;
   document.cookie = `totalChips=${totalChips}`;
-
-  // 高いレベルの表示
   highestLevelDisplay.textContent = highestLevel;
   highestChipsDisplay.textContent = highestChips;
   totalChipsDisplay.textContent = totalChips;
@@ -129,14 +135,12 @@ function levelUp() {
 // ゲーム終了
 function endGame() {
   resultDiv.textContent = `ゲーム終了! ポテトチップスの数: ${chips}`;
-  inputField.disabled = true;
-  document.getElementById('start-btn').disabled = false; // ゲーム開始ボタンを再び有効化
+  document.getElementById('start-btn').disabled = false;
 }
 
-// 情報ボタンのクリック処理
+// 情報モーダルを開く
 infoBtn.addEventListener('click', () => {
   infoModal.style.display = 'flex';
-  // Cookieから情報を読み込む
   const cookies = document.cookie.split(';');
   cookies.forEach(cookie => {
     const [key, value] = cookie.trim().split('=');
@@ -146,7 +150,17 @@ infoBtn.addEventListener('click', () => {
   });
 });
 
-// モーダルの閉じるボタン
+// 情報モーダルを閉じる
 closeInfoBtn.addEventListener('click', () => {
   infoModal.style.display = 'none';
+});
+
+// 設定モーダルを開く
+settingsBtn.addEventListener('click', () => {
+  settingsModal.style.display = 'flex';
+});
+
+// 設定モーダルを閉じる
+closeSettingsBtn.addEventListener('click', () => {
+  settingsModal.style.display = 'none';
 });
