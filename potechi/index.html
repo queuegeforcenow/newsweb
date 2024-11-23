@@ -7,40 +7,40 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="game-container">
-    <div id="header">
-      <h1>タイピングゲーム</h1>
-      <button id="start-button">ゲーム開始</button>
-      <button id="settings-button">設定</button>
+  <div class="game-container">
+    <h1>タイピングゲーム</h1>
+    
+    <div class="word-display">
+      <div class="current-word-jp">日本語: </div>
+      <div class="current-word-romaji">ローマ字: </div>
     </div>
-    <div id="game-area" class="hidden">
-      <p id="japanese-display"></p>
-      <p id="current-word"></p>
-      <div id="experience-bar">
-        <div id="experience-progress"></div>
+
+    <input type="text" id="input-field" placeholder="ローマ字を入力">
+
+    <div class="status">
+      <div>経験値: <progress id="exp-bar" value="0" max="100"></progress></div>
+      <div>ポテトチップス数: <span id="chips-count">0</span></div>
+    </div>
+
+    <button id="start-btn">ゲーム開始</button>
+    <button id="info-btn">情報</button> <!-- 情報ボタンを追加 -->
+    
+    <div id="result"></div>
+    
+    <div id="potato-container"></div> <!-- ポテトを表示するための場所 -->
+    
+    <!-- 情報モーダル -->
+    <div id="info-modal" class="info-modal">
+      <div class="modal-content">
+        <span id="close-info-btn">&times;</span>
+        <h2>ゲーム情報</h2>
+        <p>これまでに召喚したポテトチップスの数: <span id="total-chips">0</span></p>
+        <p>最高レベル: <span id="highest-level">1</span></p>
+        <p>最高ポテトチップス召喚数: <span id="highest-chips">0</span></p>
       </div>
-      <div id="status">
-        <span>スコア: <span id="score-display">0</span></span>
-        <span>レベル: <span id="level-display">1</span></span>
-        <span>残り時間: <span id="timer-display">60</span>秒</span>
-      </div>
-      <div id="potato-container"></div>
     </div>
-    <div id="settings-menu" class="hidden">
-      <h2>設定</h2>
-      <label for="potato-size">ポテトチップスの大きさ:</label>
-      <select id="potato-size">
-        <option value="large">大</option>
-        <option value="medium" selected>中</option>
-        <option value="small">小</option>
-        <option value="none">なし</option>
-      </select>
-      <label for="volume-slider">音量:</label>
-      <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
-      <button id="save-settings">保存</button>
-    </div>
-    <audio id="success-sound" src="success.mp3"></audio>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
