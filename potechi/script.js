@@ -17,6 +17,16 @@ let chips = 0; // 召喚したポテトチップスの数
 let highestLevel = 1; // 最高レベル
 let highestChips = 0; // 最高ポテトチップス召喚数
 let totalChips = 0; // 累積ポテトチップス
+let wordList = []; // ローマ字の単語リスト
+
+// JSONファイルから単語リストを読み込む
+fetch('tango.json')
+  .then(response => response.json())
+  .then(data => {
+    wordList = data;
+    console.log("単語リストが読み込まれました", wordList);
+  })
+  .catch(error => console.error('単語リストの読み込みに失敗しました:', error));
 
 // ゲーム開始処理
 function startGame() {
@@ -61,28 +71,32 @@ function spawnPotato() {
     potato.classList.add('potato');
     potatoContainer.appendChild(potato);
     potatoContainer.style.display = 'block';
+    potato.style.left = `${Math.random() * 90}%`;
 
-    potato.addEventListener('animationend', () => {
-      potatoContainer.removeChild(potato);
-    });
+    // アニメーションのためにトリガーをリセット
+    potato.offsetHeight; // Reflow trigger
 
-    chips++;
-    totalChips++;
-    highestChips = Math.max(highestChips, chips);
+    // 画面外に消える
+    setTimeout(() => {
+      potato.remove();
+    }, 1000);
   }
 }
 
 // レベルアップ処理
 function levelUp() {
-  highestLevel = Math.max(highestLevel, exp / 100 + 1);
-  levelMultiplier = Math.floor(highestLevel); // レベルに応じてポテトチップス増加量を設定
+  highestLevel++;
+  levelMultiplier = highestLevel; // レベルに応じたポテトチップスの数増加
+  expBar.value = 0;
+  document.getElementById('level').textContent = `レベル: ${highestLevel}`;
+  spawnPotato();
 }
 
 // ゲーム終了
 function endGame() {
-  resultDiv.textContent = `ゲーム終了! ポテトチップスの数: ${chips}（最高レベル: ${highestLevel}）`;
-  saveGameProgress(); // ゲームの進行状況を保存
-  startBtn.disabled = false;  // 再度ゲーム開始ボタンを有効化
+  saveGameProgress();
+  resultDiv.textContent = `ゲーム終了！ 最終ポテトチップス数: ${chips}`;
+  startBtn.disabled = false; // ゲーム開始ボタンを再度有効化
 }
 
 // ゲーム進行状況を保存
